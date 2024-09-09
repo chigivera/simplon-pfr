@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf /dist && tsc",
-    "tsc": "tsc-noEmit",
+    "build": "rm -rf ./dist && tsc",
+    "tsc": "tsc --noEmit",
     "start": "node dist/src/index.js",
     "dev": "tsx watch src/index.ts"
   },
