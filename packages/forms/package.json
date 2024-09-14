@@ -1,0 +1,19 @@
+{
+  "name": "@ntla9aw/forms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@ntla9aw/db": "workspace:^",
+    "react-hook-form": "^7.53.0",
+    "zod": "^3.23.8"
+  }
+
+}

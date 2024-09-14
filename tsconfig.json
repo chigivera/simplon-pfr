@@ -1,8 +1,12 @@
 {
     "compilerOptions": {
-    "target":"ESNext",
-    "module": "CommonJS",
-    "strict": true
+      "target": "ESNext",
+      "module": "CommonJS",
+      "strict": true,
+      "baseUrl": ".",
+      "paths": {
+        "@ntla9aw/*": ["packages/*"]
+      }
     },
     "exclude": ["node_modules"]
-    }
+  }
