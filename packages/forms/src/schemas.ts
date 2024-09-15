@@ -29,3 +29,14 @@ export const zodSchemaRegisterWithProvider = z.object({
     type: z.nativeEnum(AuthProviderType)
 
 })
+
+export const formSchemaProfile = z.object({
+    uid: z.string(),
+    name: z.string(),
+    bio: z.string().optional(),
+    avatar_url: z.string().optional(),
+})
+
+export const formSchemaCommunity = z.object({
+    
+})

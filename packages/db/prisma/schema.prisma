@@ -5,12 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 model User {
@@ -23,6 +23,23 @@ model User {
     AuthProvider AuthProvider?
     Admin        Admin?
     Manager      Manager?
+    Profile      Profile?
+    Community    Community[]
+    Event        Event[]
+    Payment      Payment[]
+    Ticket       Ticket[]
+}
+
+model Profile {
+    profile_id String  @id @default(uuid())
+    name       String
+    bio        String?
+    avatar_url String?
+    uid        String  @unique
+
+    user User @relation(fields: [uid], references: [uid])
+
+    @@map("profiles") // Rename the table to profiles
 }
 
 model Admin {
@@ -54,4 +71,78 @@ model AuthProvider {
 enum AuthProviderType {
     GOOGLE
     CREDENTIALS
-}  
+}
+
+model Community {
+    community_id String   @id @default(uuid())
+    name         String   @unique
+    description  String?
+    created_at   DateTime @default(now())
+    uid          String
+
+    user   User    @relation(fields: [uid], references: [uid])
+    events Event[]
+
+    @@map("communities") // Rename the table to communities
+}
+
+model Event {
+    event_id     String   @id @default(uuid())
+    title        String
+    description  String?
+    start_date   DateTime
+    end_date     DateTime
+    location     String
+    uid          String?
+    community_id String?
+
+    user       User?      @relation(fields: [uid], references: [uid])
+    community  Community? @relation(fields: [community_id], references: [community_id])
+    tickets    Ticket[]
+    categories Category[]
+
+    @@map("events") // Rename the table to events
+}
+
+model Ticket {
+    ticket_id     String   @id @default(uuid())
+    event_id      String
+    uid           String
+    purchase_date DateTime @default(now())
+    status        String
+
+    event Event @relation(fields: [event_id], references: [event_id])
+    user  User  @relation(fields: [uid], references: [uid])
+
+    @@map("tickets") // Rename the table to tickets
+}
+
+model Payment {
+    payment_id   String   @id @default(uuid())
+    uid          String
+    amount       Float
+    currency     String
+    status       String
+    billing_date DateTime
+
+    user User @relation(fields: [uid], references: [uid])
+
+    @@map("payments") // Rename the table to payments
+}
+
+model Category {
+    category_id String @id @default(uuid())
+    name        String @unique
+    event_id    String
+
+    event Event @relation(fields: [event_id], references: [event_id])
+
+    @@map("categories") // Rename the table to categories
+}
+
+model Tag {
+    tag_id String @id @default(uuid())
+    fields Json
+
+    @@map("tags") // Rename the table to tags
+}

@@ -7,7 +7,9 @@ export default function Home() {
   const { data: userData } = useSession();
   return (
     <main>
-      Hello {JSON.stringify(data)}
+      Hello {userData?.user?.uid}
+      <br />
+      {JSON.stringify(data)}
       <div>
         {userData?.user ? (
           <button onClick={() => signOut()}>signout</button>

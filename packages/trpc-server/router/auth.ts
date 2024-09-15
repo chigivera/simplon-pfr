@@ -3,6 +3,7 @@ import {
   formSchemaLogin,
   formSchemaRegister,
   formSchemaUser,
+  formSchemaProfile,
   zodSchemaRegisterWithProvider,
 } from "@ntla9aw/forms/src/schemas";
 import { privateProcedure, publicProcedure, router } from "../trpc";
@@ -98,5 +99,56 @@ export const authRoutes = router({
       });
       const token = sign({uid:user.uid}, process.env.NEXTAUTH_SECRET || '')
       return {user,token}
+    }),
+    createProfile: privateProcedure
+    .input(formSchemaProfile)
+    .mutation(async ({ ctx, input }) => {
+      const { uid, name, bio, avatar_url } = input;
+
+    const user = await prisma.user.findUnique({
+        where: { uid },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User not found",
+        });
+      }
+
+      const existingProfile = await prisma.profile.findUnique({
+        where: { uid },
+      });
+
+      if (existingProfile) {
+        // Update the existing profile
+        const updatedProfile = await prisma.profile.update({
+          where: { uid },
+          data: {
+            name,
+            bio,
+            avatar_url,
+          },
+        });
+  
+        return {
+          message: "Profile updated successfully",
+          profile: updatedProfile,
+        };
+      }
+
+      const profile = await prisma.profile.create({
+        data: {
+          uid,
+          name,
+          bio: bio || null, // Ensure bio is not undefined
+          avatar_url: avatar_url || null, // Ensure avatar_url is not undefined
+        },
+      });
+
+      return {
+        message: "Profile created successfully",
+        profile,
+      };
     }),
 });
