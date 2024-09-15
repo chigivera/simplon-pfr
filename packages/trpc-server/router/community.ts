@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import {
   formSchemaCommunity,
   formSchemaCommunityCreate,
+  formSchemaUser,
 } from "@ntla9aw/forms/src/schemas";
 import { privateProcedure, publicProcedure, router } from "../trpc";
 import { prisma } from "@ntla9aw/db";
@@ -16,16 +17,27 @@ export const communityRoutes = router({
     .query(({ ctx, input: { community_id } }) => {
       return prisma.community.findUnique({ where: { community_id } });
     }),
+  owner: privateProcedure
+    .input(formSchemaUser)
+    .mutation(async ({ ctx, input: { uid } }) => {
+      const community = await prisma.community.findUnique({ where: { uid } });
+      if (!community) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Community with ID ${uid} not found.`,
+        });
+      }
+      return community;
+    }),
   create: privateProcedure
     .input(formSchemaCommunityCreate)
-    .mutation(async ({ ctx, input: {name,description,uid} }) => {
-
+    .mutation(async ({ ctx, input: { name, description, uid } }) => {
       const newCommunity = await prisma.community.create({
         data: {
           community_id: uuid(), // Generate a unique ID for the community
           name,
           description: description || null, // Allow description to be optional
-          uid: uid || '',
+          uid: uid || "",
         },
       });
 
@@ -33,6 +45,5 @@ export const communityRoutes = router({
         message: "Community created successfully",
         community: newCommunity,
       };
-
     }),
 });

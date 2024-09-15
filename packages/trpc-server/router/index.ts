@@ -3,10 +3,12 @@ import { router} from '../trpc'
 
 import { authRoutes } from './auth'
 import { communityRoutes} from './community'
+import { eventRoutes } from './event'
 export const appRouter = router({
 
     auth:authRoutes,
-    community:communityRoutes
+    community:communityRoutes,
+    event:eventRoutes
 })
 
 export type AppRouter = typeof appRouter

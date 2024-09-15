@@ -78,7 +78,7 @@ model Community {
     name         String   @unique
     description  String?
     created_at   DateTime @default(now())
-    uid          String
+    uid          String  @unique
 
     user   User    @relation(fields: [uid], references: [uid])
     events Event[]
@@ -90,8 +90,7 @@ model Event {
     event_id     String   @id @default(uuid())
     title        String
     description  String?
-    start_date   DateTime
-    end_date     DateTime
+    date   DateTime
     location     String
     uid          String?
     community_id String?

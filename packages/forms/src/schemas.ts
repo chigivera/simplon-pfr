@@ -46,3 +46,31 @@ export const formSchemaCommunityCreate = z.object({
     description: z.string().max(500, "Description cannot exceed 500 characters").optional(), // Optional field
     uid: z.string().min(1, "User ID is required").optional(), // User ID must be provided
 });
+
+export const formSchemaEvent = z.object({
+    event_id: z.string().uuid().optional(), // Optional for updates
+
+})
+
+export const formSchemaEventCreate = z.object({
+    title: z.string()
+        .min(1, "Event title is required")
+        .max(100, "Title cannot exceed 100 characters"),
+    
+    description: z.string()
+        .max(500, "Description cannot exceed 500 characters")
+        .optional(), // Optional field
+    
+    date: z.string()
+        .min(1, "Date is required") // Ensure the date string is not empty
+        .refine((value) => !isNaN(Date.parse(value)), {
+            message: "Invalid date format. Please use a valid date.",
+        }),
+
+    location: z.string()
+        .min(1, "Location is required")
+        .max(200, "Location cannot exceed 200 characters"),
+    
+    uid: z.string().uuid().optional(), // Optional for updates
+    community_id: z.string().uuid().optional(), // Optional for updates
+});
