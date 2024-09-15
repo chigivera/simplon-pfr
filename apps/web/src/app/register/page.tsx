@@ -10,8 +10,7 @@ export default function Register() {
     formState: { errors },
   } = userFormRegister();
   console.log("errors:", { errors });
-  const { mutateAsync } =
-    trpcClient.auth.registerWithCredentials.useMutation();
+  const { mutateAsync } = trpcClient.auth.registerWithCredentials.useMutation();
   return (
     <form
       action=""
