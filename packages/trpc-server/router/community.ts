@@ -25,7 +25,7 @@ export const communityRoutes = router({
           community_id: uuid(), // Generate a unique ID for the community
           name,
           description: description || null, // Allow description to be optional
-          uid,
+          uid: uid || '',
         },
       });
 
