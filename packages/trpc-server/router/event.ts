@@ -28,7 +28,7 @@ export const eventRoutes = router({
     }),
 
   // Create a new event
-  create: privateProcedure.input(formSchemaEventCreate).mutation(
+  create: privateProcedure('individual',"organization").input(formSchemaEventCreate).mutation(
     async ({
       ctx,
       input: {

@@ -13,10 +13,10 @@ import { v4 as uuid } from "uuid";
 import { AuthProviderType } from "@ntla9aw/db/types";
 import { sign } from "jsonwebtoken";
 export const authRoutes = router({
-  users: privateProcedure.query(({ ctx }) => {
+  users: privateProcedure("admin").query(({ ctx }) => {
     return prisma.user.findMany();
   }),
-  user: privateProcedure
+  user: privateProcedure("admin")
     .input(formSchemaUser)
     .query(({ ctx, input: { uid } }) => {
       return prisma.user.findUnique({ where: {uid} });
@@ -100,7 +100,7 @@ export const authRoutes = router({
       const token = sign({uid:user.uid}, process.env.NEXTAUTH_SECRET || '')
       return {user,token}
     }),
-    createProfile: privateProcedure
+    createProfile: privateProcedure("member")
     .input(formSchemaProfile)
     .mutation(async ({ ctx, input }) => {
       const { uid, name, bio, avatar_url } = input;

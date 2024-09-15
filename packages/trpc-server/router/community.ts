@@ -17,7 +17,7 @@ export const communityRoutes = router({
     .query(({ ctx, input: { community_id } }) => {
       return prisma.community.findUnique({ where: { community_id } });
     }),
-  owner: privateProcedure
+  owner: privateProcedure('individual',"organization")
     .input(formSchemaUser)
     .mutation(async ({ ctx, input: { uid } }) => {
       const community = await prisma.community.findUnique({ where: { uid } });
@@ -29,7 +29,7 @@ export const communityRoutes = router({
       }
       return community;
     }),
-  create: privateProcedure
+  create: privateProcedure("individual","organization")
     .input(formSchemaCommunityCreate)
     .mutation(async ({ ctx, input: { name, description, uid } }) => {
       const newCommunity = await prisma.community.create({

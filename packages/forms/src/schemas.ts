@@ -74,3 +74,10 @@ export const formSchemaEventCreate = z.object({
     uid: z.string().uuid().optional(), // Optional for updates
     community_id: z.string().uuid().optional(), // Optional for updates
 });
+
+export const formSchemaSubscription = z.object({
+    uid: z.string().optional(),
+    product: z.enum(['member', 'individual', 'organization']),
+  });
+  
+  

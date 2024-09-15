@@ -14,20 +14,23 @@ datasource db {
 }
 
 model User {
-    uid          String        @id
-    createdAt    DateTime      @default(now())
-    updatedAt    DateTime      @updatedAt
-    name         String?
-    image        String?
-    Credentials  Credentials?
-    AuthProvider AuthProvider?
-    Admin        Admin?
-    Manager      Manager?
-    Profile      Profile?
-    Community    Community[]
-    Event        Event[]
-    Payment      Payment[]
-    Ticket       Ticket[]
+    uid                String        @id
+    createdAt          DateTime      @default(now())
+    updatedAt          DateTime      @updatedAt
+    name               String?
+    image              String?
+    stripe_customer_id String?
+    Credentials        Credentials?
+    AuthProvider       AuthProvider?
+    Admin              Admin?
+    Individual         Individual?
+    Member             Member?
+    Organization       Organization?
+    Profile            Profile?
+    Community          Community[]
+    Event              Event[]
+    Payment            Payment[]
+    Ticket             Ticket[]
 }
 
 model Profile {
@@ -47,7 +50,17 @@ model Admin {
     user User   @relation(fields: [uid], references: [uid])
 }
 
-model Manager {
+model Member {
+    uid  String @id
+    user User   @relation(fields: [uid], references: [uid])
+}
+
+model Individual {
+    uid  String @id
+    user User   @relation(fields: [uid], references: [uid])
+}
+
+model Organization {
     uid  String @id
     user User   @relation(fields: [uid], references: [uid])
 }
@@ -78,7 +91,7 @@ model Community {
     name         String   @unique
     description  String?
     created_at   DateTime @default(now())
-    uid          String  @unique
+    uid          String   @unique
 
     user   User    @relation(fields: [uid], references: [uid])
     events Event[]
@@ -90,7 +103,7 @@ model Event {
     event_id     String   @id @default(uuid())
     title        String
     description  String?
-    date   DateTime
+    date         DateTime
     location     String
     uid          String?
     community_id String?
