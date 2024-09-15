@@ -78,6 +78,11 @@ export const authRoutes = router({
           },
         },
       });
+      const role =  await prisma.member.create({
+        data:{
+          uid
+        }
+      })
       const token = sign({ uid: user.uid }, process.env.NEXTAUTH_SECRET || "");
       return { user, token };
     }),
@@ -97,6 +102,11 @@ export const authRoutes = router({
           },
         },
       });
+      const role =  await prisma.member.create({
+        data:{
+          uid
+        }
+      })
       const token = sign({uid:user.uid}, process.env.NEXTAUTH_SECRET || '')
       return {user,token}
     }),
