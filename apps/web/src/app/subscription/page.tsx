@@ -12,7 +12,7 @@ export default function Register() {
   } = userFormSubscription();
   console.log("errors:", { errors });
 
-  const { data: userData,status } = useSession(); // Get user data from session
+  const { data: userData, status } = useSession(); // Get user data from session
   const { mutateAsync } = trpcClient.upgrade.create.useMutation();
   if (status === "loading") {
     return <div>Loading...</div>; // Handle loading state

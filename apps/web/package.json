@@ -14,12 +14,14 @@
     "@ntla9aw/network": "workspace:^",
     "@ntla9aw/trpc-client": "workspace:^",
     "@ntla9aw/ui": "workspace:^",
+    "antd": "^5.20.6",
     "next": "14.2.8",
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

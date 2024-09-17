@@ -12,7 +12,7 @@ export default function Profile() {
     formState: { errors },
   } = userFormProfile();
   console.log("errors:", { errors });
-  const { data: userData,status } = useSession();
+  const { data: userData, status } = useSession();
   const { mutateAsync } = trpcClient.auth.createProfile.useMutation();
   const [file, setFile] = useState<File | null>(null);
   if (status === "loading") {

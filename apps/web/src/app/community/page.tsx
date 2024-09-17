@@ -12,7 +12,7 @@ export default function Register() {
   } = userFormCommunity();
   console.log("errors:", { errors });
 
-  const { data: userData,status } = useSession();
+  const { data: userData, status } = useSession();
   const { mutateAsync } = trpcClient.community.create.useMutation();
   if (status === "loading") {
     return <div>Loading...</div>; // Handle loading state

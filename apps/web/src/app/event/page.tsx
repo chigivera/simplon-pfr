@@ -13,7 +13,7 @@ export default function Event() {
   } = userFormEvent();
   console.log("errors:", { errors });
 
-  const { data: userData,status } = useSession();
+  const { data: userData, status } = useSession();
   const { mutateAsync } = trpcClient.event.create.useMutation();
   const { mutateAsync: fetchCommunity } =
     trpcClient.community.owner.useMutation();
