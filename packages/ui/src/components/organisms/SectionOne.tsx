@@ -5,7 +5,7 @@ import React, { ReactElement } from "react";
 const { Title, Paragraph } = Typography;
 
 interface SectionOneProps {
-  animationData: any; // Type for animation data
+  animationData: object; // Type for animation data
   vector: ReactElement; // Vector element to be displayed
   title: string; // Title for the section
   subtitle: string; // Subtitle or description for the section

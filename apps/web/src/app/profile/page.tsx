@@ -12,10 +12,16 @@ export default function Profile() {
     formState: { errors },
   } = userFormProfile();
   console.log("errors:", { errors });
-  const { data: userData } = useSession();
+  const { data: userData,status } = useSession();
   const { mutateAsync } = trpcClient.auth.createProfile.useMutation();
   const [file, setFile] = useState<File | null>(null);
+  if (status === "loading") {
+    return <div>Loading...</div>; // Handle loading state
+  }
 
+  if (!userData) {
+    return <div>You need to be authenticated to view this page.</div>; // Handle unauthenticated state
+  }
   return (
     <form
       onSubmit={handleSubmit(async (data) => {

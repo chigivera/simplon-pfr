@@ -12,9 +12,15 @@ export default function Register() {
   } = userFormSubscription();
   console.log("errors:", { errors });
 
-  const { data: userData } = useSession(); // Get user data from session
+  const { data: userData,status } = useSession(); // Get user data from session
   const { mutateAsync } = trpcClient.upgrade.create.useMutation();
+  if (status === "loading") {
+    return <div>Loading...</div>; // Handle loading state
+  }
 
+  if (!userData) {
+    return <div>You need to be authenticated to view this page.</div>; // Handle unauthenticated state
+  }
   return (
     <form
       onSubmit={handleSubmit(async (data) => {

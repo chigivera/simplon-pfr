@@ -13,7 +13,7 @@ export default function Event() {
   } = userFormEvent();
   console.log("errors:", { errors });
 
-  const { data: userData } = useSession();
+  const { data: userData,status } = useSession();
   const { mutateAsync } = trpcClient.event.create.useMutation();
   const { mutateAsync: fetchCommunity } =
     trpcClient.community.owner.useMutation();
@@ -35,7 +35,13 @@ export default function Event() {
 
     getCommunity();
   }, [userData, fetchCommunity]);
+  if (status === "loading") {
+    return <div>Loading...</div>; // Handle loading state
+  }
 
+  if (!userData) {
+    return <div>You need to be authenticated to view this page.</div>; // Handle unauthenticated state
+  }
   return (
     <form
       onSubmit={handleSubmit(async (data) => {

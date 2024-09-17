@@ -7,14 +7,16 @@ interface SearchInputProps {
   }
 
   const getPanelValue = (searchText: string): { value: string }[] => {
-    // Implement the logic to get panel values based on the search text
-    // For example:
-    return [
-      { value: 'Option 1' },
-      { value: 'Option 2' },
-      { value: 'Option 3' },
+    const allOptions = [
+        { value: 'Option 1' },
+        { value: 'Option 2' },
+        { value: 'Option 3' },
     ];
-  };
+
+    return allOptions.filter(option => 
+        option.value.toLowerCase().includes(searchText.toLowerCase())
+    );
+};
   
   const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
     const [options, setOptions] = useState<{ value: string }[]>([]);

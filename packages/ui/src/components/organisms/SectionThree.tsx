@@ -2,10 +2,10 @@ import { Space, Typography } from "antd";
 import Lottie from "lottie-react";
 import React, { ReactElement } from "react";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 interface SectionThreeProps {
-  animationData: any; // Type for animation data
+  animationData: object; // Type for animation data
   vector: ReactElement; // Vector element to be displayed
   title: string; // Title for the section
   subtitle: string; // Subtitle or description for the section
