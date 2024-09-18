@@ -167,24 +167,26 @@ export default function EventPage() {
             }
           />
         </Col>
-        <Col
-          span={6}
-          style={{ backgroundColor: "#FFF9D0", padding: "1em" }}
-        >
+        <Col span={6} style={{ backgroundColor: "#FFF9D0", padding: "1em" }}>
           <Space direction="vertical">
-             <TicketCard ticketAmount={5} onClick={() => console.log("Buy Ticket")} />
-            <CommunityCard {...{
-              id: communitiesData[0].id,
-              name: communitiesData[0].name,
-              description: communitiesData[0].description,
-              eventList: communitiesData[0].eventList,
-              coverImage: communitiesData[0].coverImage,
-              createdAt: communitiesData[0].createdAt,
-              updatedAt: communitiesData[0].updatedAt,
-              isActive: communitiesData[0].isActive,
-              isFeatured: communitiesData[0].isFeatured,
-              onClick:()=>{}
-            }} />
+            <TicketCard
+              ticketAmount={5}
+              onClick={() => console.log("Buy Ticket")}
+            />
+            <CommunityCard
+              {...{
+                id: communitiesData[0].id,
+                name: communitiesData[0].name,
+                description: communitiesData[0].description,
+                eventList: communitiesData[0].eventList,
+                coverImage: communitiesData[0].coverImage,
+                createdAt: communitiesData[0].createdAt,
+                updatedAt: communitiesData[0].updatedAt,
+                isActive: communitiesData[0].isActive,
+                isFeatured: communitiesData[0].isFeatured,
+                onClick: () => {},
+              }}
+            />
           </Space>
         </Col>
       </Row>
