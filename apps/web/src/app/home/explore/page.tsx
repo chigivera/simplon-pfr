@@ -1,15 +1,19 @@
 "use client";
 import CustomFilter from "@ntla9aw/ui/src/components/molecules/CustomFilter";
-import EventListItem from "@ntla9aw/ui/src/components/molecules/EventListItem";
+import EventList from "@ntla9aw/ui/src/components/organisms/EventList";
+import EventListItem,{EventListItemProps} from "@ntla9aw/ui/src/components/molecules/EventListItem";
 
 import { useState } from "react";
 import { Dayjs } from "dayjs";
 import { Col, Row } from "antd";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const CustomMap = dynamic(() => import('@ntla9aw/ui/src/components/organisms/CustomMap'), {
-  ssr: false,
-});
+const CustomMap = dynamic(
+  () => import("@ntla9aw/ui/src/components/organisms/CustomMap"),
+  {
+    ssr: false,
+  },
+);
 
 // const mapData = [
 //   { name: "Agadir", latitude: 30.46667, longitude: -9.91667 },
@@ -61,13 +65,34 @@ const CustomMap = dynamic(() => import('@ntla9aw/ui/src/components/organisms/Cus
 //   { name: "Toubkal, Djebel ", latitude: 31, longitude: 8 },
 //   { name: "Villa Bens/Tarfaya ", latitude: 27, longitude: -12 },
 // ];
-const sampleEvent = {
-  name: "Sample Event",
-  date: new Date(), // Current date for example
-  location: "Sample Location",
-  categories: ["Category1", "Category2"],
-  onClick: () => alert("Booked!"), // Example click handler
-};
+const listofEvents: EventListItemProps[] = [
+  {
+    id: 1,
+    name: "Sample Event 1",
+    description:'howow',
+    date: new Date(2024, 8, 25), // Example date
+    location: "Location 1",
+    categories: ["Category A", "Category B"],
+    group: "Group A",
+    ticketAmount: 100,
+    ticketPrice: 50,
+    badge: "featured",
+    onClick: () => console.log("Booking Sample Event 1"), // Added onClick
+  },
+  {
+    id: 2,
+    name: "Sample Event 2",
+    description:'bowow',
+    date: new Date(2024, 9, 5), // Example date
+    location: "Location 2",
+    categories: ["Category C", "Category D"],
+    group: "Group B",
+    ticketAmount: 200,
+    ticketPrice: 75,
+    badge: "hot",
+    onClick: () => console.log("Booking Sample Event 2"), // Added onClick
+  },
+];
 interface Filters {
   date_start: Dayjs | null;
   date_end: Dayjs | null;
@@ -89,7 +114,7 @@ export default function Explore() {
     setFilters(newFilters);
     // Perform additional actions, such as fetching data based on the new filters
   };
-  
+
   return (
     <>
       <CustomFilter
@@ -102,18 +127,9 @@ export default function Explore() {
         }
       />
       <Row style={{ marginTop: 10 }} justify={"space-between"}>
-        {" "}
-        {/* Added gutter for spacing */}
-        <Col span={17} style={{ backgroundColor: "#FFF9D0", padding: "1em" }}>
-          {/* Content for the first column */}
-          <EventListItem 
-          id={1}
-          description="lorem ipsum dolor"
-            {...sampleEvent} 
-            badge="featured" // Example badge type
-          />        </Col>
+        <EventList Card={EventListItem} data={listofEvents} />
         <Col span={6} style={{ backgroundColor: "#FFF9D0", padding: "1em" }}>
-          <CustomMap position={[33,-7]} zoom={13}/>
+          <CustomMap position={[33, -7]} zoom={13} />
         </Col>
       </Row>
     </>
