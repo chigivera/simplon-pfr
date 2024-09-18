@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Layout, theme } from "antd";
+import { Layout } from "antd";
 import CustomNavBar from "../organisms/NavBar"; // Ensure this path is correct
 import CustomFooter from "../organisms/CustomFooter";
 const { Header } = Layout;
@@ -28,17 +28,14 @@ const socials = [
 ];
 
 const CustomLayout: React.FC<CustomLayoutProps> = ({ children }) => {
-  const {
-    token: { colorPrimary },
-  } = theme.useToken();
-
+  
   return (
     <Layout>
       <Header
         style={{
           display: "flex",
           alignItems: "center",
-          backgroundColor: colorPrimary,
+          backgroundColor: '#FEF7FF',
           padding: 0, // Remove default padding
         }}
       >

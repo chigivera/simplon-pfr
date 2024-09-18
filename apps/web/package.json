@@ -10,6 +10,7 @@
     "tsc": "tsc --noEmit"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.4.0",
     "@ntla9aw/forms": "workspace:^",
     "@ntla9aw/network": "workspace:^",
     "@ntla9aw/trpc-client": "workspace:^",

@@ -1,11 +1,10 @@
-"use client"
+"use client";
 import React from "react";
 
 import Link from "next/link";
 import SearchInput from "../atoms/SearchInput";
 import { Brand } from "../atoms/Brand";
 import { Menu } from "antd";
-
 
 // Define the navigation items
 const navItems = [
@@ -32,27 +31,32 @@ const navItems = [
 ];
 
 const CustomNavBar: React.FC = () => {
-
   const handleSearch = (value: string) => {
     console.log("Searched value:", value);
     // Implement your search logic here
   };
   return (
-   
-        <Menu mode="horizontal"  style={{ flex: 1, background: "none",backgroundColor:'white',justifyContent:'space-between' }}>
-            <Menu.Item>
-                <Brand/>
-            </Menu.Item>
-          <Menu.Item>
-            <SearchInput onSearch={handleSearch} />
-          </Menu.Item>
-          {navItems.map((item) => (
-            <Menu.Item key={item.key}>
-              <Link href={item.href}>{item.label}</Link>
-            </Menu.Item>
-          ))}
-        </Menu>
-
+    <Menu
+      mode="horizontal"
+      style={{
+        flex: 1,
+        background: "none",
+        backgroundColor: "#FEF7FF",
+        justifyContent: "space-between",
+      }}
+    >
+      <Menu.Item>
+        <Brand />
+      </Menu.Item>
+      <Menu.Item>
+        <SearchInput onSearch={handleSearch} />
+      </Menu.Item>
+      {navItems.map((item) => (
+        <Menu.Item key={item.key}>
+          <Link href={item.href}>{item.label}</Link>
+        </Menu.Item>
+      ))}
+    </Menu>
   );
 };
 

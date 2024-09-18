@@ -31,7 +31,8 @@ interface SearchInputProps {
     };
   
     return (
-      <Space>
+      <Space style={{          backgroundColor: '#FFFFFF', height:30,borderRadius:30
+      }}>
         <AutoComplete
           options={options}
           style={{ width: 200 }}

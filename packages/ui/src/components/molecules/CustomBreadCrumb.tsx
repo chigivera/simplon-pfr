@@ -10,7 +10,7 @@ const CustomBreadCrumb = () => {
     const pathSegments = pathname.split('/').filter(segment => segment);
 
     const breadcrumbItems = pathSegments.map((segment, index) => {
-        const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
+        const href = `/${pathSegments.slice(1, index + 1).join('/')}`;
         return {
             title: (
                 <Link href={href}>
