@@ -17,7 +17,7 @@ const CommunityCard: React.FC<CommunityCardProps> = ({
     <Card
       hoverable
       onClick={onClick}
-      style={{ width: '250px', height: '300px' }} // Reduced width and height for smaller cards
+      style={{ height: '100%' }} // Reduced width and height for smaller cards
       actions={[
         <CustomButton label="Book" onClick={onClick} />,
       ]}
