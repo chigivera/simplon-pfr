@@ -1,7 +1,9 @@
 "use client";
 import CustomFilter from "@ntla9aw/ui/src/components/molecules/CustomFilter";
 import EventList from "@ntla9aw/ui/src/components/organisms/EventList";
-import EventListItem,{EventListItemProps} from "@ntla9aw/ui/src/components/molecules/EventListItem";
+import EventListItem, {
+  EventListItemProps,
+} from "@ntla9aw/ui/src/components/molecules/EventListItem";
 
 import { useState } from "react";
 import { Dayjs } from "dayjs";
@@ -69,7 +71,7 @@ const listofEvents: EventListItemProps[] = [
   {
     id: 1,
     name: "Sample Event 1",
-    description:'howow',
+    description: "howow",
     date: new Date(2024, 8, 25), // Example date
     location: "Location 1",
     categories: ["Category A", "Category B"],
@@ -82,7 +84,7 @@ const listofEvents: EventListItemProps[] = [
   {
     id: 2,
     name: "Sample Event 2",
-    description:'bowow',
+    description: "bowow",
     date: new Date(2024, 9, 5), // Example date
     location: "Location 2",
     categories: ["Category C", "Category D"],
