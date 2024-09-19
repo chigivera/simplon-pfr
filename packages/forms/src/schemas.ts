@@ -1,4 +1,4 @@
-import {map, z} from 'zod'
+import { z} from 'zod'
 import { AuthProviderType } from '@ntla9aw/db/types'
 
 export const formSchemaRegister = z.object({

@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { Layout } from "antd";
+import CustomLayout from "@ntla9aw/ui/src/components/molecules/CustomLayout";
 
 const Hero = dynamic(
   () => import("@ntla9aw/ui/src/components/organisms/Hero"),
@@ -78,34 +79,36 @@ const subscriptions = [
 
 export default function Home() {
   return (
-    <Layout style={{ padding: "8em" }}>
-      <Hero
-        imageUrl="https://images.unsplash.com/photo-1472653431158-6364773b2a56?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        title="Find Your Community and grow you network"
-        subtitle="get connected with our exponentially growing user base and our fresh and woinderful experience."
-        buttonLabel="Start Now"
-        onButtonClick={() => {}}
-      />
-      <SectionOne
-        animationData={AnimationOne}
-        vector={<LogoOne width={200} height={200} fill="#5AB2FF" />}
-        title="Ntla9aw Is more than an Event Planner"
-        subtitle="ntla9aw is a platform for connecting people with offline or online events"
-      />
-      <SectionTwo
-        animationData={AnimationTwo}
-        vector={<LogoTwo width={200} height={200} fill="#5AB2FF" />}
-        title="Our Best Solution for Branding and Networking"
-        subtitle="ntla9aw offers solution for people seeking growth significant connections and network."
-      />
-      <SectionThree
-        animationData={AnimationThree}
-        vector={<LogoThree width={100} height={100} fill="#5AB2FF" />}
-        title="You probably seen enough..."
-        subtitle="Now We’d like to know about you"
-      />
-      <SectionFour testimonials={testimonials} />
-      <SectionFive subscriptions={subscriptions} />
-    </Layout>
+    <CustomLayout>
+      <Layout style={{ padding: "8em" }}>
+        <Hero
+          imageUrl="https://images.unsplash.com/photo-1472653431158-6364773b2a56?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          title="Find Your Community and grow you network"
+          subtitle="get connected with our exponentially growing user base and our fresh and woinderful experience."
+          buttonLabel="Start Now"
+          onButtonClick={() => {}}
+        />
+        <SectionOne
+          animationData={AnimationOne}
+          vector={<LogoOne width={200} height={200} fill="#5AB2FF" />}
+          title="Ntla9aw Is more than an Event Planner"
+          subtitle="ntla9aw is a platform for connecting people with offline or online events"
+        />
+        <SectionTwo
+          animationData={AnimationTwo}
+          vector={<LogoTwo width={200} height={200} fill="#5AB2FF" />}
+          title="Our Best Solution for Branding and Networking"
+          subtitle="ntla9aw offers solution for people seeking growth significant connections and network."
+        />
+        <SectionThree
+          animationData={AnimationThree}
+          vector={<LogoThree width={100} height={100} fill="#5AB2FF" />}
+          title="You probably seen enough..."
+          subtitle="Now We’d like to know about you"
+        />
+        <SectionFour testimonials={testimonials} />
+        <SectionFive subscriptions={subscriptions} />
+      </Layout>
+    </CustomLayout>
   );
 }

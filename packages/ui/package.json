@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
+    "@ntla9aw/forms": "workspace:^",
     "antd": "^5.20.6",
     "dayjs": "^1.11.13",
     "leaflet": "^1.9.4",

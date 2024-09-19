@@ -3,10 +3,12 @@ import React from "react";
 import { Button } from "antd";
 
 interface CustomButtonProps {
-  label: string;
+  label?: string;
   onClick: () => void;
   type?: "primary" | "default" | "dashed" | "link" | "text";
   style?: React.CSSProperties;
+  shape?: "default" | "circle" | "round" | undefined,
+  icon?: React.ReactElement
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -14,9 +16,11 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   onClick,
   type = "default",
   style,
+  shape,
+  icon
 }) => {
   return (
-    <Button type={type} onClick={onClick} style={style} >
+    <Button shape={shape} type={type} onClick={onClick} style={style} icon={icon}>
       {label}
     </Button>
   );

@@ -1,8 +1,12 @@
 import { Space } from "antd";
+import { CSSProperties } from "react";
+interface BrandProps {
+  style?: CSSProperties;
+}
 
-export const Brand: React.FC = () => {
+export const Brand: React.FC<BrandProps> = ({ style }) => {
   return (
-    <Space align="center" direction="vertical">
+    <Space style={style} align="center" direction="vertical">
       <svg
         width="111"
         height="31"
