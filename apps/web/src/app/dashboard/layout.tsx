@@ -82,6 +82,7 @@ export default function DashboardLayout({
         </Header>
         <Content
           style={{
+            padding: "1em",
             backgroundColor: "#FFF9D0", // Set background color for the Content
           }}
         >
