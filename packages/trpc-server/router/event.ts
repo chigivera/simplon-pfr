@@ -8,12 +8,10 @@ import { prisma } from "@ntla9aw/db";
 import { v4 as uuid } from "uuid";
 
 export const eventRoutes = router({
-  // Fetch all events
   events: publicProcedure.query(({  }) => {
     return prisma.event.findMany();
   }),
 
-  // Fetch a specific event by ID
   event: publicProcedure
     .input(formSchemaEvent)
     .query(async ({  input: { event_id } }) => {

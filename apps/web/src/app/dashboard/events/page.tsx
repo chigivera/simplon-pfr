@@ -1,7 +1,7 @@
 "use client";
 import { Dayjs } from "dayjs";
 import { useState } from "react";
-import { DatePicker, Space } from "antd"; // Ensure you import RangePicker correctly
+import { DatePicker } from "antd"; // Ensure you import RangePicker correctly
 import CustomDataTable from "@ntla9aw/ui/src/components/molecules/DataTable";
 import type { TableColumnsType } from "antd";
 import CustomButton from "@ntla9aw/ui/src/components/atoms/Button";
@@ -86,14 +86,21 @@ export default function DashboardEvent() {
 
   return (
     <>
-      <Space align="start">
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "1em",
+        }}
+      >
+        <CustomButton label="Create New Event" onClick={() => {}} />,
         <RangePicker
           showTime
           value={[filters.date_start, filters.date_end]}
           onChange={handleDateChange}
         />
-        <CustomButton label="Book" onClick={() => {}} />,
-      </Space>
+      </div>
       <CustomDataTable columns={columns} data={data} />
     </>
   );
