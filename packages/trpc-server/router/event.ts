@@ -9,14 +9,14 @@ import { v4 as uuid } from "uuid";
 
 export const eventRoutes = router({
   // Fetch all events
-  events: publicProcedure.query(({ ctx }) => {
+  events: publicProcedure.query(({  }) => {
     return prisma.event.findMany();
   }),
 
   // Fetch a specific event by ID
   event: publicProcedure
     .input(formSchemaEvent)
-    .query(async ({ ctx, input: { event_id } }) => {
+    .query(async ({  input: { event_id } }) => {
       const event = await prisma.event.findUnique({ where: { event_id } });
       if (!event) {
         throw new TRPCError({
@@ -30,7 +30,6 @@ export const eventRoutes = router({
   // Create a new event
   create: privateProcedure('individual',"organization").input(formSchemaEventCreate).mutation(
     async ({
-      ctx,
       input: {
         title,
         description,

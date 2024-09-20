@@ -9,17 +9,17 @@ import { prisma } from "@ntla9aw/db";
 import { v4 as uuid } from "uuid";
 
 export const communityRoutes = router({
-  commnunities: publicProcedure.query(({ ctx }) => {
+  commnunities: publicProcedure.query(({ }) => {
     return prisma.community.findMany();
   }),
   community: publicProcedure
     .input(formSchemaCommunity)
-    .query(({ ctx, input: { community_id } }) => {
+    .query(({  input: { community_id } }) => {
       return prisma.community.findUnique({ where: { community_id } });
     }),
   owner: privateProcedure('individual',"organization")
     .input(formSchemaUser)
-    .mutation(async ({ ctx, input: { uid } }) => {
+    .mutation(async ({  input: { uid } }) => {
       const community = await prisma.community.findUnique({ where: { uid } });
       if (!community) {
         throw new TRPCError({
@@ -31,7 +31,7 @@ export const communityRoutes = router({
     }),
   create: privateProcedure("individual","organization")
     .input(formSchemaCommunityCreate)
-    .mutation(async ({ ctx, input: { name, description, uid } }) => {
+    .mutation(async ({  input: { name, description, uid } }) => {
       const newCommunity = await prisma.community.create({
         data: {
           community_id: uuid(), // Generate a unique ID for the community

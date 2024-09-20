@@ -13,17 +13,17 @@ import { v4 as uuid } from "uuid";
 import { AuthProviderType } from "@ntla9aw/db/types";
 import { sign } from "jsonwebtoken";
 export const authRoutes = router({
-  users: privateProcedure("admin").query(({ ctx }) => {
+  users: privateProcedure("admin").query(({ }) => {
     return prisma.user.findMany();
   }),
   user: privateProcedure("admin")
     .input(formSchemaUser)
-    .query(({ ctx, input: { uid } }) => {
+    .query(({  input: { uid } }) => {
       return prisma.user.findUnique({ where: {uid} });
     }),
   signIn: publicProcedure
     .input(formSchemaLogin)
-    .mutation(async ({ ctx, input: { email, password } }) => {
+    .mutation(async ({  input: { email, password } }) => {
       const credentials = await prisma.credentials.findUnique({
         where: { email },
         include: { user: true },
@@ -65,6 +65,7 @@ export const authRoutes = router({
         data: {
           uid,
           name,
+          image,
           Credentials: {
             create: {
               email,
@@ -78,7 +79,7 @@ export const authRoutes = router({
           },
         },
       });
-      const role =  await prisma.member.create({
+      await prisma.member.create({
         data:{
           uid
         }
@@ -88,8 +89,8 @@ export const authRoutes = router({
     }),
   registerWithProvider: publicProcedure
     .input(zodSchemaRegisterWithProvider)
-    .mutation(async ({ ctx, input }) => {
-      const { type, uid, image, name } = input;
+    .mutation(async ({  input }) => {
+      const {  uid, image, name } = input;
       const user = await prisma.user.create({
         data: {
           uid,
@@ -102,7 +103,7 @@ export const authRoutes = router({
           },
         },
       });
-      const role =  await prisma.member.create({
+      await prisma.member.create({
         data:{
           uid
         }
@@ -112,7 +113,7 @@ export const authRoutes = router({
     }),
     createProfile: privateProcedure("member")
     .input(formSchemaProfile)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({  input }) => {
       const { uid, name, bio, avatar_url } = input;
 
     const user = await prisma.user.findUnique({
