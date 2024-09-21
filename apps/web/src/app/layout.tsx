@@ -1,19 +1,17 @@
 import "./globals.css";
 import { Provider } from "@ntla9aw/trpc-client/src/Provider";
-import SessionProvider from "@ntla9aw/ui/src/components/molecules/SessionProvider";
-import { getServerSession } from "next-auth/next";
+import {SessionProvider} from "@ntla9aw/ui/src/components/molecules/SessionProvider";
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(); // Fetch the session on the server side
 
   return (
     <html lang="en">
       <body>
-        <SessionProvider session={session}>
+        <SessionProvider >
           <Provider>{children}</Provider>
         </SessionProvider>
       </body>

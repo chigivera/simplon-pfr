@@ -1,18 +1,18 @@
 "use client";
 
-import  { useState } from 'react';
+import { useState } from "react";
 import { Button, Input, Form, Upload, Image } from "antd";
 import { Controller } from "react-hook-form";
 import { userFormCommunity } from "@ntla9aw/forms/src/community";
-import CustomButton from "../atoms/Button";
 import { Typography } from "antd";
 import { trpcClient } from "@ntla9aw/trpc-client/src/client";
 import { PlusOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadProps } from "antd";
+import { useSession } from "next-auth/react";
 
 const { Title } = Typography;
 
-type FileType = Parameters<NonNullable<UploadProps['beforeUpload']>>[0];
+type FileType = Parameters<NonNullable<UploadProps["beforeUpload"]>>[0];
 
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -28,6 +28,7 @@ const CommunityForm = ({ title }: { title: string }) => {
     handleSubmit,
     formState: { errors },
   } = userFormCommunity();
+  const { data: userData } = useSession();
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -40,8 +41,6 @@ const CommunityForm = ({ title }: { title: string }) => {
     setPreviewImage(file.url || (file.preview as string));
     setPreviewOpen(true);
   };
-
-
 
   return (
     <>
@@ -58,7 +57,7 @@ const CommunityForm = ({ title }: { title: string }) => {
               const formData = new FormData();
               formData.append("file", file);
               formData.append("upload_preset", "ml_default");
-      
+
               const uploadResponse = await fetch(
                 "https://api.cloudinary.com/v1_1/dc0jqirfl/image/upload",
                 {
@@ -66,20 +65,18 @@ const CommunityForm = ({ title }: { title: string }) => {
                   body: formData,
                 }
               );
-              
+
               const uploadData = await uploadResponse.json();
               data.image = uploadData.secure_url;
             }
-      
           } catch (error) {
             console.error("Registration error:", error);
           }
+          data.uid = userData?.user?.uid;
           console.log("data:", data);
           const { mutateAsync } = trpcClient.community.create.useMutation();
           const communty = await mutateAsync(data);
           console.log("communty:", communty);
-         
-          
         })}
         autoComplete="off"
       >
@@ -90,7 +87,7 @@ const CommunityForm = ({ title }: { title: string }) => {
           <Controller
             name="name"
             control={control}
-            render={({ field  }) => <Input {...field} placeholder="name" />}
+            render={({ field }) => <Input {...field} placeholder="name" />}
           />
         </Form.Item>
 
@@ -101,18 +98,9 @@ const CommunityForm = ({ title }: { title: string }) => {
           <Controller
             name="description"
             control={control}
-            render={({ field }) => <Input.Password {...field} placeholder="description" />}
-          />
-        </Form.Item>
-
-        <Form.Item
-          validateStatus={errors.name ? "error" : ""}
-          help={errors.name?.message}
-        >
-          <Controller
-            name="name"
-            control={control}
-            render={({ field }) => <Input {...field} placeholder="name" />}
+            render={({ field }) => (
+              <Input.TextArea allowClear {...field} placeholder="description" />
+            )}
           />
         </Form.Item>
 
@@ -126,7 +114,10 @@ const CommunityForm = ({ title }: { title: string }) => {
             showUploadList={false}
             onPreview={handlePreview}
           >
-            <Button style={{ border: 0, background: "none" }} icon={<PlusOutlined />}>
+            <Button
+              style={{ border: 0, background: "none" }}
+              icon={<PlusOutlined />}
+            >
               Upload
             </Button>
           </Upload>
@@ -143,14 +134,13 @@ const CommunityForm = ({ title }: { title: string }) => {
           )}
         </Form.Item>
 
-        <Form.Item style={{ display: "flex", flexWrap: "nowrap", flexDirection: "column" }}>
-          <CustomButton
-            style={{ marginRight: 7 }}
-            label="New Here?"
-            onClick={() => {
-              console.log("clicked");
-            }}
-          />
+        <Form.Item
+          style={{
+            display: "flex",
+            flexWrap: "nowrap",
+            flexDirection: "column",
+          }}
+        >
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
