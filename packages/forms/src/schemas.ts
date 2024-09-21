@@ -45,6 +45,7 @@ export const formSchemaCommunityCreate = z.object({
     name: z.string().min(1, "Community name is required").max(100, "Name cannot exceed 100 characters"),
     description: z.string().max(500, "Description cannot exceed 500 characters").optional(), // Optional field
     uid: z.string().min(1, "User ID is required").optional(), // User ID must be provided
+    image: z.string().optional()
 });
 
 export const formSchemaEvent = z.object({
