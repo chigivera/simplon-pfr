@@ -6,8 +6,8 @@ import { DatePicker } from "antd";
 import EventTable from "@ntla9aw/ui/src/components/molecules/EventTable";
 import type { TableColumnsType } from "antd";
 import CustomButton from "@ntla9aw/ui/src/components/atoms/Button";
-import EventForm from '@ntla9aw/ui/src/components/molecules/EventForm';
-import  { ModalContext } from '@ntla9aw/ui/src/components/molecules/ModalProvider';
+import EventForm from "@ntla9aw/ui/src/components/molecules/EventForm";
+import { ModalContext } from "@ntla9aw/ui/src/components/molecules/ModalProvider";
 
 const { RangePicker } = DatePicker;
 
@@ -29,7 +29,12 @@ interface DataType {
 }
 
 const data: DataType[] = [
-  { key: "1", name: "John Brown", age: 32, address: "New York No. 1 Lake Park" },
+  {
+    key: "1",
+    name: "John Brown",
+    age: 32,
+    address: "New York No. 1 Lake Park",
+  },
   { key: "2", name: "Joe Black", age: 42, address: "London No. 1 Lake Park" },
   { key: "3", name: "Jim Green", age: 32, address: "Sydney No. 1 Lake Park" },
   { key: "4", name: "Jim Red", age: 32, address: "London No. 2 Lake Park" },
@@ -43,7 +48,7 @@ const columns: TableColumnsType<DataType> = [
 
 export default function DashboardEvent() {
   const [filters, setFilters] = useState<Filters>(initialFilters);
-  
+
   // Access modal context
   const modalContext = useContext(ModalContext);
 
@@ -68,7 +73,14 @@ export default function DashboardEvent() {
   };
   return (
     <>
-      <div style={{ width: "100%", display: "flex", justifyContent: "space-between", marginBottom: "1em" }}>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "1em",
+        }}
+      >
         <CustomButton label="Create New Event" onClick={handleCreateNewEvent} />
         <RangePicker
           showTime
@@ -76,7 +88,12 @@ export default function DashboardEvent() {
           onChange={handleDateChange}
         />
       </div>
-      <EventTable columns={columns} data={data} onUpdate={handleUpdateEvent} onDelete={()=>{}}/>
+      <EventTable
+        columns={columns}
+        data={data}
+        onUpdate={handleUpdateEvent}
+        onDelete={() => {}}
+      />
     </>
   );
 }
