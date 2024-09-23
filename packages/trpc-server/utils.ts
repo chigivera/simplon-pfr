@@ -4,21 +4,26 @@ import { TRPCError } from "@trpc/server";
 import Stripe from "stripe";
 
 export const getUserRoles = async (uid: string): Promise<Role[]> => {
-  const [adminExists, memberExists, individualExists, organizationExists] =
-    await Promise.all([
-      prisma.admin.findUnique({ where: { uid } }),
-      prisma.member.findUnique({ where: { uid } }),
-      prisma.individual.findUnique({ where: { uid } }),
-      prisma.organization.findUnique({ where: { uid } }),
-    ]);
+  try {
+    const [adminExists, memberExists, individualExists, organizationExists] =
+      await Promise.all([
+        prisma.admin.findUnique({ where: { uid } }),
+        prisma.member.findUnique({ where: { uid } }),
+        prisma.individual.findUnique({ where: { uid } }),
+        prisma.organization.findUnique({ where: { uid } }),
+      ]);
 
-  const roles: Role[] = [];
-  if (adminExists) roles.push("admin");
-  if (memberExists) roles.push("member");
-  if (individualExists) roles.push("individual");
-  if (organizationExists) roles.push("organization");
+    const roles: Role[] = [];
+    if (adminExists) roles.push("admin");
+    if (memberExists) roles.push("member");
+    if (individualExists) roles.push("individual");
+    if (organizationExists) roles.push("organization");
 
-  return roles;
+    return roles;
+  } catch (error) {
+    console.error("Error fetching user roles:", error);
+    throw error;
+  }
 };
 
 export const authorizeUser = async (
@@ -30,13 +35,13 @@ export const authorizeUser = async (
   }
 
   const userRoles = await getUserRoles(uid);
-
+console.log("userRoles",userRoles)
   if (!userRoles.some((role) => roles.includes(role))) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "User does not have the required role(s).",
     });
-  }
+  } 
 };
 
 // export const checkRowLevelPermission = async (
@@ -81,8 +86,8 @@ export const createCheckoutSession = async (priceId: string, uid: string) => {
       },
     ],
     mode: 'subscription',
-    success_url: `http://localhost:3000/subscription?success&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `http://localhost:3000/cancel`,
+    success_url: `http://localhost:3000/dashboard`,
+    cancel_url: `http://localhost:3000/auth/subscription`,
     metadata: {
       uid, // Store user ID for later use
     },

@@ -9,7 +9,7 @@ export const subscriptionRoutes = t.router({
     .input(formSchemaSubscription)
     .mutation(async ({ input }) => {
       const { uid, product } = input;
-
+      if(product === "member") return;
       // Map product to Stripe price ID
       const priceIdMap: Record<string, string> = {
         member: process.env.STRIPE_MEMBER_PRICE_ID || '',

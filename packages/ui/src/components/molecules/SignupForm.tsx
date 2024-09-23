@@ -10,6 +10,7 @@ import { trpcClient } from "@ntla9aw/trpc-client/src/client";
 import { signIn } from "next-auth/react";
 import { PlusOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadProps } from "antd";
+import { useRouter } from 'next/navigation'; // Import useRouter from Next.js
 
 const { Title } = Typography;
 
@@ -29,6 +30,9 @@ const SignupForm = ({ title }: { title: string }) => {
     handleSubmit,
     formState: { errors },
   } = userFormRegister();
+  const { mutateAsync } = trpcClient.auth.registerWithCredentials.useMutation();
+const router = useRouter(); // Initialize useRouter
+
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -41,7 +45,9 @@ const SignupForm = ({ title }: { title: string }) => {
     setPreviewImage(file.url || (file.preview as string));
     setPreviewOpen(true);
   };
-
+  const handleLoginClick = () => {
+    router.push('/auth/signin'); // Navigates to login
+  };
 
 
   return (
@@ -76,7 +82,6 @@ const SignupForm = ({ title }: { title: string }) => {
             console.error("Registration error:", error);
           }
           console.log("data:", data);
-          const { mutateAsync } = trpcClient.auth.registerWithCredentials.useMutation();
           const user = await mutateAsync(data);
           console.log("user:", user);
           if (user?.user) {
@@ -86,7 +91,8 @@ const SignupForm = ({ title }: { title: string }) => {
               callbackUrl: "/",
             });
           }
-          
+        router.push('/auth/subscription');
+
         })}
         autoComplete="off"
       >
@@ -153,12 +159,10 @@ const SignupForm = ({ title }: { title: string }) => {
         <Form.Item style={{ display: "flex", flexWrap: "nowrap", flexDirection: "column" }}>
           <CustomButton
             style={{ marginRight: 7 }}
-            label="New Here?"
-            onClick={() => {
-              console.log("clicked");
-            }}
+            label="Log in"
+            onClick={handleLoginClick}
           />
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" >
             Submit
           </Button>
         </Form.Item>

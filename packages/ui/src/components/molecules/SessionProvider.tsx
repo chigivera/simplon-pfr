@@ -1,7 +1,10 @@
-'use client'
-import { SessionProvider as NextAuthSessionProvider } from 'next-auth/react'
-import { ReactNode } from 'react'
+"use client"
+// packages/ui/src/components/molecules/SessionProvider.tsx
+import { SessionProvider as NextAuthSessionProvider } from 'next-auth/react';
+import { ReactNode } from 'react';
 
-export const SessionProvider = ({ children }: { children: ReactNode }) => {
-  return <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
-}
+const SessionProvider = ({ children }: { children: ReactNode }) => {
+  return <NextAuthSessionProvider>{children}</NextAuthSessionProvider>;
+};
+
+export default SessionProvider;

@@ -14,9 +14,12 @@ export const isAuthed = (...roles: Role[]) =>
  }
  let uid
  try {
+   console.log("token",token)
     const user = await verify(token, process.env.NEXTAUTH_SECRET || '')
     uid = (user as JwtPayload).uid
- } catch (error) {
+    console.log("Decoded UID from JWT:", uid)
+
+   } catch (error) {
     throw new TRPCError({
         code:'FORBIDDEN',
         message:"Token is required"

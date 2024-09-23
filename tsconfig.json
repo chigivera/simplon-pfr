@@ -1,12 +1,16 @@
 {
-    "compilerOptions": {
-      "target": "ESNext",
-      "module": "CommonJS",
-      "strict": true,
-      "baseUrl": ".",
-      "paths": {
-        "@ntla9aw/*": ["packages/*"]
-      }
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ntla9aw/*": ["packages/*"]
     },
-    "exclude": ["node_modules"]
-  }
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["node_modules"]
+}

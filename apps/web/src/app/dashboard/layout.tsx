@@ -55,7 +55,7 @@ export default function DashboardLayout({
     }
   }, [pathname]); // Run effect whenever pathname changes
 
-  const handleMenuClick = (e) => {
+  const handleMenuClick = (e: { key: React.SetStateAction<string | null> }) => {
     const selectedItem = navItems.find((item) => item.key === e.key);
     if (selectedItem) {
       router.push(selectedItem.link);

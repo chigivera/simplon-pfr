@@ -76,14 +76,12 @@ const columns: TableColumnsType<DataType> = [
 
 export default function DashboardEvent() {
   const [filters, setFilters] = useState<Filters>(initialFilters);
-
-  const handleDateChange = (dates: [Dayjs | null, Dayjs | null]) => {
+  const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
     setFilters({
-      date_start: dates[0],
-      date_end: dates[1],
+      date_start: dates ? dates[0] : null,
+      date_end: dates ? dates[1] : null,
     });
   };
-
   return (
     <>
       <div

@@ -54,6 +54,7 @@ export const formSchemaEvent = z.object({
 })
 
 export const formSchemaEventCreate = z.object({
+    image: z.string().optional(), // Optional for updates
     title: z.string()
         .min(1, "Event title is required")
         .max(100, "Title cannot exceed 100 characters"),

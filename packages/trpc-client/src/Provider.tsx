@@ -3,26 +3,36 @@
 import { trpcClient as trpc } from "./client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
-import React,{ useState } from "react";
-import superjson from "superjson";
+
+import React, { useState } from "react";
+
 export const Provider = ({ children }: { children: React.ReactNode }) => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
-      transformer: superjson,
       links: [
         httpBatchLink({
-          url: "http://localhost:8080/trpc", // replace with your actual server URL
+          url: process.env.NEXT_PUBLIC_API_URL + "/trpc",
           async headers() {
+            const token = await fetch(
+              process.env.NEXT_PUBLIC_APP_URL + "/api/auth/token"
+            )
+              .then((res) => {
+                if (!res.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return res.json();
+              })
+              .catch((error) => console.error("Fetch error:", error));
             return {
-              authorization:
-                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiJheW1hbiJ9.gIRx_bkzwUW8NeaQOHYDirEvjdiiCnp1T7gBmgdx2Do",
+              authorization: `Bearer ${token}`,
             };
           },
         }),
       ],
     })
   );
+
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

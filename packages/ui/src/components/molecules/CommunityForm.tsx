@@ -28,6 +28,8 @@ const CommunityForm = ({ title }: { title: string }) => {
     handleSubmit,
     formState: { errors },
   } = userFormCommunity();
+  const { mutateAsync } = trpcClient.community.create.useMutation();
+
   const { data: userData } = useSession();
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -74,9 +76,12 @@ const CommunityForm = ({ title }: { title: string }) => {
           }
           data.uid = userData?.user?.uid;
           console.log("data:", data);
-          const { mutateAsync } = trpcClient.community.create.useMutation();
-          const communty = await mutateAsync(data);
-          console.log("communty:", communty);
+          try {
+            const community = await mutateAsync(data);
+            console.log("Community created:", community);
+          } catch (error) {
+            console.error("Error creating community:", error);
+          }
         })}
         autoComplete="off"
       >
