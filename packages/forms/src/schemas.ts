@@ -52,7 +52,6 @@ export const formSchemaEvent = z.object({
     event_id: z.string().uuid().optional(), // Optional for updates
 
 })
-
 export const formSchemaEventCreate = z.object({
     image: z.string().optional(), // Optional for updates
     title: z.string()
@@ -69,10 +68,19 @@ export const formSchemaEventCreate = z.object({
             message: "Invalid date format. Please use a valid date.",
         }),
 
-    location: z.string()
-        .min(1, "Location is required")
-        .max(200, "Location cannot exceed 200 characters"),
+    city_id: z.string() // Required city ID
+        .min(1, "City ID is required"),
     
+    address: z.string() // Optional address field
+        .max(200, "Address cannot exceed 200 characters")
+        .optional(),
+    
+    longitude: z.number() // Optional longitude field
+        .optional(),
+    
+    latitude: z.number() // Optional latitude field
+        .optional(),
+
     uid: z.string().uuid().optional(), // Optional for updates
     community_id: z.string().uuid().optional(), // Optional for updates
 });

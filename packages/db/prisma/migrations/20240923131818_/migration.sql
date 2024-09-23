@@ -1,3 +1,18 @@
+-- CreateEnum
+CREATE TYPE "AuthProviderType" AS ENUM ('GOOGLE', 'CREDENTIALS');
+
+-- CreateTable
+CREATE TABLE "User" (
+    "uid" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "name" TEXT,
+    "image" TEXT,
+    "stripe_customer_id" TEXT,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("uid")
+);
+
 -- CreateTable
 CREATE TABLE "profiles" (
     "profile_id" TEXT NOT NULL,
@@ -7,6 +22,53 @@ CREATE TABLE "profiles" (
     "uid" TEXT NOT NULL,
 
     CONSTRAINT "profiles_pkey" PRIMARY KEY ("profile_id")
+);
+
+-- CreateTable
+CREATE TABLE "Admin" (
+    "uid" TEXT NOT NULL,
+
+    CONSTRAINT "Admin_pkey" PRIMARY KEY ("uid")
+);
+
+-- CreateTable
+CREATE TABLE "Member" (
+    "uid" TEXT NOT NULL,
+
+    CONSTRAINT "Member_pkey" PRIMARY KEY ("uid")
+);
+
+-- CreateTable
+CREATE TABLE "Individual" (
+    "uid" TEXT NOT NULL,
+
+    CONSTRAINT "Individual_pkey" PRIMARY KEY ("uid")
+);
+
+-- CreateTable
+CREATE TABLE "Organization" (
+    "uid" TEXT NOT NULL,
+
+    CONSTRAINT "Organization_pkey" PRIMARY KEY ("uid")
+);
+
+-- CreateTable
+CREATE TABLE "Credentials" (
+    "uid" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Credentials_pkey" PRIMARY KEY ("uid")
+);
+
+-- CreateTable
+CREATE TABLE "AuthProvider" (
+    "uid" TEXT NOT NULL,
+    "type" "AuthProviderType" NOT NULL,
+
+    CONSTRAINT "AuthProvider_pkey" PRIMARY KEY ("uid")
 );
 
 -- CreateTable
@@ -25,11 +87,13 @@ CREATE TABLE "events" (
     "event_id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
-    "start_date" TIMESTAMP(3) NOT NULL,
-    "end_date" TIMESTAMP(3) NOT NULL,
-    "location" TEXT NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "city_id" TEXT NOT NULL,
     "uid" TEXT,
     "community_id" TEXT,
+    "address" TEXT,
+    "longitude" DOUBLE PRECISION,
+    "latitude" DOUBLE PRECISION,
 
     CONSTRAINT "events_pkey" PRIMARY KEY ("event_id")
 );
@@ -74,17 +138,54 @@ CREATE TABLE "tags" (
     CONSTRAINT "tags_pkey" PRIMARY KEY ("tag_id")
 );
 
+-- CreateTable
+CREATE TABLE "cities" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "longitude" DOUBLE PRECISION,
+    "latitude" DOUBLE PRECISION,
+
+    CONSTRAINT "cities_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "profiles_uid_key" ON "profiles"("uid");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Credentials_email_key" ON "Credentials"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "communities_name_key" ON "communities"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "communities_uid_key" ON "communities"("uid");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "categories_name_key" ON "categories"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "cities_name_key" ON "cities"("name");
 
 -- AddForeignKey
 ALTER TABLE "profiles" ADD CONSTRAINT "profiles_uid_fkey" FOREIGN KEY ("uid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Admin" ADD CONSTRAINT "Admin_uid_fkey" FOREIGN KEY ("uid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Member" ADD CONSTRAINT "Member_uid_fkey" FOREIGN KEY ("uid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Individual" ADD CONSTRAINT "Individual_uid_fkey" FOREIGN KEY ("uid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Organization" ADD CONSTRAINT "Organization_uid_fkey" FOREIGN KEY ("uid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Credentials" ADD CONSTRAINT "Credentials_uid_fkey" FOREIGN KEY ("uid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AuthProvider" ADD CONSTRAINT "AuthProvider_uid_fkey" FOREIGN KEY ("uid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "communities" ADD CONSTRAINT "communities_uid_fkey" FOREIGN KEY ("uid") REFERENCES "User"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -94,6 +195,9 @@ ALTER TABLE "events" ADD CONSTRAINT "events_uid_fkey" FOREIGN KEY ("uid") REFERE
 
 -- AddForeignKey
 ALTER TABLE "events" ADD CONSTRAINT "events_community_id_fkey" FOREIGN KEY ("community_id") REFERENCES "communities"("community_id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "events" ADD CONSTRAINT "events_city_id_fkey" FOREIGN KEY ("city_id") REFERENCES "cities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"("event_id") ON DELETE RESTRICT ON UPDATE CASCADE;

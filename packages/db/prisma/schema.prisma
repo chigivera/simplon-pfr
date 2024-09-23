@@ -31,6 +31,7 @@ model User {
     Event              Event[]
     Payment            Payment[]
     Ticket             Ticket[]
+    tags               Tag[]         @relation(name: "UserTags")
 }
 
 model Profile {
@@ -95,6 +96,7 @@ model Community {
 
     user   User    @relation(fields: [uid], references: [uid])
     events Event[]
+    tags   Tag[]   @relation(name: "CommunityTags")
 
     @@map("communities") // Rename the table to communities
 }
@@ -104,14 +106,17 @@ model Event {
     title        String
     description  String?
     date         DateTime
-    location     String
+    city_id      String // Foreign key referencing Location
     uid          String?
     community_id String?
-
+    tags         Tag[]    @relation(name: "EventTags")
     user       User?      @relation(fields: [uid], references: [uid])
     community  Community? @relation(fields: [community_id], references: [community_id])
     tickets    Ticket[]
-    categories Category[]
+    city       City       @relation(fields: [city_id], references: [id])
+    address    String?
+    longitude  Float?
+    latitude   Float?
 
     @@map("events") // Rename the table to events
 }
@@ -142,19 +147,23 @@ model Payment {
     @@map("payments") // Rename the table to payments
 }
 
-model Category {
-    category_id String @id @default(uuid())
-    name        String @unique
-    event_id    String
 
-    event Event @relation(fields: [event_id], references: [event_id])
-
-    @@map("categories") // Rename the table to categories
-}
 
 model Tag {
     tag_id String @id @default(uuid())
-    fields Json
+    name   String @unique
 
-    @@map("tags") // Rename the table to tags
+    events      Event[]     @relation(name: "EventTags")
+    communities Community[] @relation(name: "CommunityTags")
+    users       User[]      @relation(name: "UserTags")
+}
+
+model City {
+    id        String  @id @default(uuid())
+    name      String  @unique
+    longitude Float?
+    latitude  Float?
+    events    Event[] // A location can have many events
+
+    @@map("cities") // Rename the table to locations
 }
