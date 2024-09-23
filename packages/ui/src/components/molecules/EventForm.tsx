@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Input, Form, Upload, Image, DatePicker } from "antd";
+import { Button, Input, Form, Upload, Image, DatePicker, Select } from "antd";
 import { Controller } from "react-hook-form";
 import { userFormEvent } from "@ntla9aw/forms/src/event";
 import CustomButton from "../atoms/Button";
@@ -30,37 +30,44 @@ const EventForm = ({ title }: { title: string }) => {
     handleSubmit,
     formState: { errors },
   } = userFormEvent();
+  const [cities, setCities] = useState<{ name: string; id: string; longitude: number | null; latitude: number | null; }[]>([]);
   const { data: userData, status } = useSession();
   const { mutateAsync } = trpcClient.event.create.useMutation();
   const { mutateAsync: fetchCommunity } = trpcClient.community.owner.useMutation();
-
-  const [communityId, setCommunityId] = useState<string | null>(null); // State to hold community ID
+  const { data: citiesData } = trpcClient.navigation.cities.useQuery();
+  const [communityId, setCommunityId] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
-  // Fetch community on component mount or when userData changes
+  useEffect(() => {
+    if (citiesData) {
+      setCities(citiesData); // Assuming citiesData is an array of city objects
+    }
+  }, [citiesData]);
   useEffect(() => {
     const getCommunity = async () => {
       if (userData?.user?.uid) {
         try {
-          const community = await fetchCommunity({ uid: userData?.user?.uid });
-          setCommunityId(community.community_id); // Set the community ID from the fetched community
+          const community = await fetchCommunity({ uid: userData.user.uid });
+          setCommunityId(community.community_id);
         } catch (error) {
           console.error("Error fetching community:", error);
         }
       }
     };
-
+  
+ 
+  
     getCommunity();
   }, [userData, fetchCommunity]);
 
   if (status === "loading") {
-    return <div>Loading...</div>; // Handle loading state
+    return <div>Loading...</div>;
   }
 
   if (!userData) {
-    return <div>You need to be authenticated to view this page.</div>; // Handle unauthenticated state
+    return <div>You need to be authenticated to view this page.</div>;
   }
 
   const handlePreview = async (file: UploadFile) => {
@@ -76,9 +83,9 @@ const EventForm = ({ title }: { title: string }) => {
       <Title level={2}>{title}</Title>
 
       <Form
-        name="signup"
+        name="event-form"
         labelCol={{ span: 8 }}
-        wrapperCol={{ span: 21 }}
+        wrapperCol={{ span: 16 }}
         style={{ maxWidth: 800 }}
         onFinish={handleSubmit(async (data) => {
           try {
@@ -98,24 +105,16 @@ const EventForm = ({ title }: { title: string }) => {
               const uploadData = await uploadResponse.json();
               data.image = uploadData.secure_url;
             }
+
+            data.uid = userData?.user?.uid;
+            data.community_id = communityId || undefined;
+
+            const response = await mutateAsync(data); // Pass all data including image
+
+            console.log("Event created:", response);
           } catch (error) {
-            console.error("Registration error:", error);
+            console.error("Event creation error:", error);
           }
-
-          // Call the mutation function with the event data
-          data.uid = userData?.user?.uid;
-          data.community_id = communityId || undefined; // Use the fetched community ID
-
-          const response = await mutateAsync({
-            title: data.title,
-            description: data.description,
-            date: data.date,
-            location: data.location,
-            community_id: data.community_id,
-            uid: data.uid,
-          });
-
-          console.log("Event created:", response);
         })}
         autoComplete="off"
       >
@@ -147,41 +146,49 @@ const EventForm = ({ title }: { title: string }) => {
 
         {/* Date Field */}
         <Form.Item
-  label="Date"
-  validateStatus={errors.date ? "error" : ""}
-  help={errors.date?.message}
+          label="Date"
+          validateStatus={errors.date ? "error" : ""}
+          help={errors.date?.message}
+        >
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => (
+              <DatePicker
+                showTime
+                onChange={(date) => {
+                  if (date) {
+                    field.onChange(dayjs(date).toISOString());
+                  } else {
+                    field.onChange(null);
+                  }
+                }}
+                value={field.value ? dayjs(field.value) : null}
+              />
+            )}
+          />
+        </Form.Item>
+
+        {/* Location Field */}
+        <Form.Item
+  label="Location"
+  validateStatus={errors.city_id ? "error" : ""}
+  help={errors.city_id?.message}
 >
   <Controller
-    name="date"
+    name="city_id"
     control={control}
     render={({ field }) => (
-      <DatePicker
-        showTime
-        onChange={(date) => {
-          if (date) {
-            field.onChange(dayjs(date).toISOString()); // Convert date to ISO string using dayjs
-          } else {
-            field.onChange(null); // Handle null case (e.g., if the user clears the date)
-          }
-        }}
-        value={field.value ? dayjs(field.value) : null} // Convert string to dayjs object for display
+      <Select
+        {...field}
+        options={cities.map((city) => ({
+          value: city.id,
+          label: city.name,
+        }))}
       />
     )}
   />
 </Form.Item>
-
-        {/* Location Field */}
-        <Form.Item
-          label="Location"
-          validateStatus={errors.location ? "error" : ""}
-          help={errors.location?.message}
-        >
-          <Controller
-            name="location"
-            control={control}
-            render={({ field }) => <Input {...field} placeholder="Location" />}
-          />
-        </Form.Item>
 
         {/* File Upload Field */}
         <Form.Item valuePropName="fileList">
@@ -194,11 +201,8 @@ const EventForm = ({ title }: { title: string }) => {
             showUploadList={false}
             onPreview={handlePreview}
           >
-            <Button
-              style={{ border: 0, background: "none" }}
-              icon={<PlusOutlined />}
-            >
-              Upload
+            <Button style={{ border: 0, background: "none" }} icon={<PlusOutlined />}>
+              Upload Image
             </Button>
           </Upload>
           {previewImage && (
@@ -216,7 +220,7 @@ const EventForm = ({ title }: { title: string }) => {
 
         {/* Submit Button */}
         <Form.Item>
-          <CustomButton style={{ marginRight: 7 }} label="Cancel"  onClick={()=>{}} />
+          <CustomButton style={{ marginRight: 7 }} label="Cancel" onClick={() => {}} />
           <Button type="primary" htmlType="submit">
             Submit
           </Button>

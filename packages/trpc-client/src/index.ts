@@ -1,7 +1,6 @@
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 
 import { AppRouter } from "@ntla9aw/trpc-server/router";
-import superjson from "superjson";
 import { cookies } from 'next/headers'
 
 export const trpc = createTRPCProxyClient<AppRouter>({
