@@ -22,7 +22,7 @@ function CommunityList({ Card, data, title, style }: CommunityListProps) {
       <Space direction="vertical" size="large" style={{ width: '100%', marginTop: '16px' }}>
         {data.map((item) => (
           <Card
-            key={item.id}
+            key={item.community_id}
             {...item} 
             onClick={() => console.log(`Selected ${item.name}`)} 
           />

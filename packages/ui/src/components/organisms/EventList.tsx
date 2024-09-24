@@ -4,24 +4,21 @@ import { ElementType } from "react";
 import {  Event } from "../../utils/types";
 
 
-interface EventListItemProps extends Event {
-    onClick: () => void;
-}
 
 
 interface PreviewListProps {
     Card: ElementType; // Use ElementType for components
-    data: EventListItemProps[]; // Define the type of data more specifically if possible
+    data: Event[] | undefined; // Allow undefined
 }
 
 function EventList({ Card, data }: PreviewListProps) {
     return (
         <Col span={17} style={{ backgroundColor: "#FFF9D0", padding: "1em" }}>
-     {data.map((item) => (
+     {data && data.map((item) => (
                 <Card
-                    key={item.id}
+                    key={item.event_id}
                     {...item} 
-                    onClick={() => console.log(`Booking ${item.name}`)} 
+                    onClick={() => console.log(`Booking ${item.title}`)} 
                 />
             ))}
       </Col>

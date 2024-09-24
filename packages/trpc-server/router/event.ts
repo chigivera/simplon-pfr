@@ -8,14 +8,29 @@ import { prisma } from "@ntla9aw/db";
 import { v4 as uuid } from "uuid";
 
 export const eventRoutes = router({
-  events: publicProcedure.query(({  }) => {
-    return prisma.event.findMany();
+  events: publicProcedure.query(({}) => {
+    return prisma.event.findMany({
+      include: {
+        tags: true,
+        community: true,
+        city: true,
+        user: true,
+      },
+    });
   }),
 
   event: publicProcedure
     .input(formSchemaEvent)
-    .query(async ({  input: { event_id } }) => {
-      const event = await prisma.event.findUnique({ where: { event_id } });
+    .query(async ({ input: { event_id } }) => {
+      const event = await prisma.event.findUnique({
+        where: { event_id },
+        include: {
+          tags: true,
+          community: true,
+          city: true,
+          user: true,
+        },
+      });
       if (!event) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -26,40 +41,50 @@ export const eventRoutes = router({
     }),
 
   // Create a new event
-  create: privateProcedure('individual',"organization").input(formSchemaEventCreate).mutation(
-    async ({
-      input: {
-        title,
-        description,
-        date,
-        city_id,
-        address,
-        longitude,
-        latitude,
-        community_id,
-        uid,
-    },
-    }) => {
-      // Create a new event in the database
-      const newEvent = await prisma.event.create({
-        data: {
-          event_id: uuid(), // Generate a unique ID for the event
+  create: privateProcedure("individual", "organization")
+    .input(formSchemaEventCreate)
+    .mutation(
+      async ({
+        input: {
           title,
-          description: description || null, // Allow description to be optional
-          date: new Date(date), // Convert string date to Date object
-          city_id, // Use provided city ID
-          address: address || null, // Allow address to be optional
-          longitude: longitude || null, // Allow longitude to be optional
-          latitude: latitude || null, // Allow latitude to be optional
-          uid: uid || null, // Allow uid to be optional
-          community_id: community_id || null, // Allow community_id to be optional
-      },
-      });
+          description,
+          date,
+          city_id,
+          address,
+          longitude,
+          latitude,
+          community_id,
+          uid,
+          image,
+          type,
+          TicketPrice,
+          ticketAmount
+        },
+      }) => {
+        // Create a new event in the database
+        const newEvent = await prisma.event.create({
+          data: {
+            event_id: uuid(), // Generate a unique ID for the event
+            title,
+            description: description || null, // Allow description to be optional
+            date: new Date(date), // Convert string date to Date object
+            city_id, // Use provided city ID
+            address: address || null, // Allow address to be optional
+            longitude: longitude || null, // Allow longitude to be optional
+            latitude: latitude || null, // Allow latitude to be optional
+            uid: uid || null, // Allow uid to be optional
+            community_id: community_id || null, // Allow community_id to be optional
+            image: image || null, // Allow image to be optional
+            type,
+            ticketAmount: ticketAmount || 0,
+            TicketPrice: TicketPrice || 0
+          },
+        });
 
-      return {
-        message: "Event created successfully",
-        event: newEvent,
-      };
-    }
-  ),
+        return {
+          message: "Event created successfully",
+          event: newEvent,
+        };
+      }
+    ),                                                        
 });

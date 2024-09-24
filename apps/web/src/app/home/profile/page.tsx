@@ -1,32 +1,43 @@
 "use client";
 import { Col, Image, Row } from "antd";
-import CommunityListItem from "@ntla9aw/ui/src/components/molecules/CommunityListItem";
+// import CommunityListItem from "@ntla9aw/ui/src/components/molecules/CommunityListItem";
 import ProfileTags from "@ntla9aw/ui/src/components/molecules/ProfileTags";
-import CommunityList from "@ntla9aw/ui/src/components/organisms/CommunityList";
+// import CommunityList from "@ntla9aw/ui/src/components/organisms/CommunityList";
 import ProfileInfo from "@ntla9aw/ui/src/components/atoms/ProfileInfo";
-const communityData = [
-  {
-    id: 1,
-    coverImage: "https://example.com/community1.jpg",
-    name: "Community 1",
-  },
-  {
-    id: 2,
-    coverImage: "https://example.com/community2.jpg",
-    name: "Community 2",
-  },
-];
-const tagsData = [
-  "Event Organizer",
-  "Community Leader",
-  "Tech Enthusiast",
-  "Public Speaker",
-  "Developer",
-  "Designer",
-  "Volunteer",
-  "Photographer",
-];
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { trpcStatic } from "@ntla9aw/trpc-client/src/static";
+import { User } from "@ntla9aw/ui/src/utils/types";
+
 export default function Profile() {
+  const { data: userData } = useSession();
+  const [profileData, setprofileData] = useState<User>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Ensure eventId is a string
+
+  useEffect(() => {
+    async function fetchProfileData() {
+      try {
+        if (!userData?.user?.uid) return;
+        const data = await trpcStatic.auth.user.query({
+          uid: userData?.user?.uid,
+        });
+        if (data) {
+          setprofileData(data);
+        }
+      } catch (err) {
+        setError("Error Fetching Events");
+        console.error(err);
+      }
+    }
+
+    fetchProfileData();
+    setLoading(false);
+  }, [userData?.user?.uid]);
+  console.log(loading, error);
+  console.log("member id", profileData?.Member);
   return (
     <>
       {/* Background image */}
@@ -50,19 +61,21 @@ export default function Profile() {
           <Image
             width={200}
             height={200}
-            src="https://plus.unsplash.com/premium_photo-1725617260937-252aad2e865b?q=80&w=1412&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Direct avatar image URL from Unsplash
+            src={`${userData?.user?.image}`} // Direct avatar image URL from Unsplash
             style={{ borderRadius: "50%", border: "2px solid white" }}
             alt="Profile"
             preview={false} // Disable image preview
           />
           {/* TODO TAGS */}
-          <ProfileTags data={tagsData} title={"Interests"} />
+          {profileData?.tags && (
+            <ProfileTags data={profileData?.tags} title={"Interests"} />
+          )}
           {/* TODO COMMUNITIES */}
-          <CommunityList
+          {/* <CommunityList
             Card={CommunityListItem}
-            data={communityData}
+            data={profileData?.Member}
             title={"Communities"}
-          />
+          /> */}
         </Col>
         <Col
           xs={24}

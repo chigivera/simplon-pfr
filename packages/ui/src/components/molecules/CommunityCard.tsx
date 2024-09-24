@@ -1,37 +1,32 @@
 import React from "react";
-import {  Card, Image } from "antd";
+import { Card, Image } from "antd";
 import { Community } from "../../utils/types";
 import CustomButton from "../atoms/Button";
 
-interface CommunityCardProps extends Community {
-  onClick: () => void;
+interface CommunityCardProps {
+  community: Community; // Define an interface for props
 }
 
-const CommunityCard: React.FC<CommunityCardProps> = ({
-  name,
-  description,
-  coverImage,
-  onClick,
-}) => {
+const CommunityCard: React.FC<CommunityCardProps> = ({ community }) => {
   return (
     <Card
       hoverable
-      onClick={onClick}
-      style={{ height: '100%' }} // Reduced width and height for smaller cards
+      onClick={() => {}}
+      style={{ height: '100%' }} // Adjust height for smaller cards
       actions={[
-        <CustomButton label="Book" onClick={onClick} />,
+        <CustomButton label="Book" onClick={() => {}} />,
       ]}
     >
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px' }}>
-          <Image
-            alt="community"
-            src={coverImage}
-            style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '50%' }}
-          />
+        <Image
+          alt="community"
+          src={`${community.image}`}
+          style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '50%' }}
+        />
       </div>
-      <Card.Meta title={name} description={description} style={{ marginTop: 10 }} />
+      <Card.Meta title={community.name} description={community.description} style={{ marginTop: 10 }} />
     </Card>
   );
 };
 
-export default CommunityCard; 
+export default CommunityCard;

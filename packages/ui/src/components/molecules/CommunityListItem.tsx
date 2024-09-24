@@ -3,11 +3,11 @@ const { Title } = Typography;
 import { Community } from "../../utils/types";
 
 
-function CommunityListItem({ coverImage, name }: Community) {
+function CommunityListItem({ image, name }: Community) {
   return (
     <Space align="start" style={{backgroundColor:'#FFF9D0',width:'100%',padding:'1em'}}>
       <Image
-        src={coverImage}
+        src={`${image}`}
         width={100} // Adjust width as needed
         height={70} // Set fixed height for the image
         style={{ objectFit: 'cover' }} // Ensure the image covers the container

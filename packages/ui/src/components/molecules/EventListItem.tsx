@@ -1,32 +1,38 @@
 import React from "react";
-import { Avatar, Badge, Card, Image, Tag, Typography } from "antd";
+import { Avatar, Card, Image, Tag, Typography } from "antd";
 import { Event } from "../../utils/types"; // Ensure this includes the necessary properties
 import CustomButton from "../atoms/Button";
+import { useRouter } from "next/navigation";
 
-export interface EventListItemProps extends Event {
-  onClick: () => void;
-  date: Date;
-  location: string;
-  categories: string[];
-  badge?: "hot" | "featured";
-  ticketAmount: number;
-  ticketPrice: number;
-  group: string;
-}
+// export interface EventListItemProps extends Event {
+//   badge?: "hot" | "featured";
+// }
 
 const { Meta } = Card;
 
-const EventListItem: React.FC<EventListItemProps> = ({
-  name,
+const EventListItem: React.FC<Event> = ({
+  event_id,
+  // type,
+  // description,
+  // latitude,
+  // longitude,
+  image,
+  title,
   date,
-  location,
-  categories,
-  group,
-  onClick,
-  badge,
+  city,
+  address,
+  tags,
+  community,
+  // badge,
   ticketAmount,
-  ticketPrice,
+  TicketPrice,
 }) => {
+  const router = useRouter();
+
+  const handleBookClick = () => {
+    router.push(`/event/${event_id}`);
+  };
+
   return (
     <Card
       style={{
@@ -38,51 +44,50 @@ const EventListItem: React.FC<EventListItemProps> = ({
         position: "relative",
       }}
       cover={
-        <Badge
-          count={
-            badge && (
-              <Typography
-                style={{
-                  backgroundColor: "#5AB2FF",
-                  borderRadius: 30,
-                  padding: "0 4px",
-                }}
-              >
-                {badge}
-              </Typography>
-            )
-          }
-        >
+        // <Badge
+        //   count={
+        //     badge && (
+        //       <Typography
+        //         style={{
+        //           backgroundColor: "#5AB2FF",
+        //           borderRadius: 30,
+        //           padding: "0 4px",
+        //         }}
+        //       >
+        //         {badge}
+        //       </Typography>
+        //     )
+        //   }
+        // >
           <Image
             alt="event"
-            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-            style={{  height: "150px", marginRight: "16px",objectFit:'cover' }}
-            
+            src={`${image}`}
+            style={{ height: "150px", marginRight: "16px", objectFit: 'cover' }}
           />
-        </Badge>
+        // </Badge>
       }
     >
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
         <Meta
           avatar={
-            <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
+            <Avatar src={community?.image} />
           }
-          title={name}
-          description={group}
+          title={title}
+          description={community?.name || ""}
         />
         <div style={{ marginTop: 10 }}>
           <div>
-            {categories.map((category, index) => (
+            {tags.map((tag, index) => (
               <Tag key={index} color="blue">
-                {category}
+                {tag.name}
               </Tag>
             ))}
           </div>
           <p>
-            <strong>Date:</strong> {date.toLocaleDateString()}
+            <strong>Date:</strong> {date}
           </p>
           <p>
-            <strong>Location:</strong> {location}
+            <strong>Location:</strong> {address}, {city.name}
           </p>
         </div>
       </div>
@@ -92,22 +97,22 @@ const EventListItem: React.FC<EventListItemProps> = ({
           flexDirection: 'column',
           position: "absolute",
           right: 0,
-          top:0,
+          top: 0,
           height: "100%",
           justifyContent: "center",
           alignItems: "center",
           width: 100,
-          backgroundColor:'#A0DEFF'
+          backgroundColor: '#A0DEFF'
         }}
       >
         <div>
           <Typography.Text strong>Tickets:</Typography.Text> {ticketAmount}
         </div>
         <div>
-          <Typography.Text strong>Price:</Typography.Text> ${ticketPrice}
+          <Typography.Text strong>Price:</Typography.Text> ${TicketPrice}
         </div>
         <div>
-          <CustomButton label="Book" onClick={onClick} />
+          <CustomButton label="Book" onClick={handleBookClick} />
         </div>
       </div>
     </Card>

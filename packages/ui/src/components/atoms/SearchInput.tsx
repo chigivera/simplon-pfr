@@ -24,13 +24,11 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedTag, setSelectedTag] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
-  console.log(tags,locations)
   useEffect(() => {
     // Fetch the locations data from trpc
     const fetchLocations = async () => {
       try {
         const locationData = await trpcStatic.navigation.cities.query();
-        console.log(locationData)
         setLocations(locationData);
       } catch (error) {
         console.error('Error fetching locations:', error);

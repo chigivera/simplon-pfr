@@ -1,5 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient ,User, Event,AuthProviderType,EventType} from '@prisma/client';
 const prisma = new PrismaClient();
+import { faker } from '@faker-js/faker';
+import * as bcrypt from 'bcryptjs';
 
 const mapData = [
   { name: "Agadir", latitude: 30.46667, longitude: -9.91667 },
@@ -53,349 +55,176 @@ const mapData = [
 ];
 
 const popularEventTags = [
-  "music",
-  "festival",
-  "concert",
-  "comedy",
-  "workshop",
-  "networking",
-  "business",
-  "technology",
-  "education",
-  "health",
-  "fitness",
-  "food",
-  "wine",
-  "beer",
-  "art",
-  "design",
-  "fashion",
-  "sports",
-  "outdoors",
-  "travel",
-  "lifestyle",
-  "community",
-  "family",
-  "youth",
-  "senior",
-  "charity",
-  "fundraiser",
-  "holiday",
-  "seasonal",
-  "exclusive",
-  "free",
-  "paid",
-  "virtual",
-  "in-person",
-  "interactive",
-  "keynote",
-  "panel",
-  "conference",
-  "summit",
-  "expo",
-  "meetup",
-  "party",
-  "performance",
-  "screening",
-  "competition",
-  "tournament",
-  "class",
-  "workshop",
-  "demonstration",
-  "tour",
-  "exhibition",
-  "fair",
-  "festival",
-  "parade",
-  "ceremony",
-  "gala",
-  "celebration",
-  "symposium",
-  "seminar",
-  "webinar",
-  "retreat",
-  "camp",
-  "rally",
-  "protest",
-  "activism",
-  "volunteer",
-  "nonprofit",
-  "corporate",
-  "private",
-  "public",
-  "ticketed",
-  "free-to-attend",
-  "youth-focused",
-  "adult-only",
-  "family-friendly",
-  "pet-friendly",
-  "sustainable",
-  "eco-friendly",
-  "inclusive",
-  "diverse",
-  "women-focused",
-  "minority-focused",
-  "accessibility",
-  "disability-friendly",
-  "educational",
-  "professional",
-  "social",
-  "cultural",
-  "historical",
-  "political",
-  "religious",
-  "spiritual",
-  "creative",
-  "entrepreneurial",
-  "networking",
-  "learning",
-  "entertainment",
-  "relaxation",
-  "wellness",
-  "self-improvement",
-  "community-building",
-  "advocacy",
-  "awareness",
-  "fundraising",
-  "charitable",
-  "celebration",
-  "recognition",
-  "awards",
-  "competition",
-  "tournament",
-  "gaming",
-  "esports",
-  "music",
-  "art",
-  "film",
-  "theater",
-  "dance",
-  "literature",
-  "photography",
-  "technology",
-  "innovation",
-  "startups",
-  "industry-specific",
-  "product-launch",
-  "career-development",
-  "job-fair",
-  "recruitment",
-  "training",
-  "certification",
-  "networking",
-  "social-impact",
-  "environmental",
-  "sustainability",
-  "climate-change",
-  "renewable-energy",
-  "conservation",
-  "activism",
-  "community-service",
-  "volunteer",
-  "philanthropy",
-  "nonprofit",
-  "fundraising",
-  "charity",
-  "humanitarian",
-  "social-justice",
-  "diversity",
-  "inclusion",
-  "equity",
-  "civil-rights",
-  "LGBTQ+",
-  "women's-rights",
-  "racial-justice",
-  "disability-rights",
-  "indigenous-rights",
-  "immigrant-rights",
-  "youth-empowerment",
-  "senior-services",
-  "accessibility",
-  "mental-health",
-  "wellness",
-  "self-care",
-  "personal-growth",
-  "mindfulness",
-  "meditation",
-  "yoga",
-  "fitness",
-  "sports",
-  "recreation",
-  "outdoor-adventure",
-  "travel",
-  "tourism",
-  "culinary",
-  "food",
-  "wine",
-  "beer",
-  "cocktails",
-  "spirits",
-  "coffee",
-  "tea",
-  "agriculture",
-  "gardening",
-  "urban-farming",
-  "health",
-  "medicine",
-  "science",
-  "research",
-  "technology",
-  "innovation",
-  "engineering",
-  "robotics",
-  "artificial-intelligence",
-  "software",
-  "cybersecurity",
-  "blockchain",
-  "cryptocurrency",
-  "gaming",
-  "esports",
-  "virtual-reality",
-  "augmented-reality",
-  "cinema",
-  "television",
-  "music",
-  "performing-arts",
-  "visual-arts",
-  "literature",
-  "design",
-  "fashion",
-  "architecture",
-  "urban-planning",
-  "transportation",
-  "mobility",
-  "logistics",
-  "government",
-  "politics",
-  "policy",
-  "law",
-  "education",
-  "lifelong-learning",
-  "professional-development",
-  "leadership",
-  "entrepreneurship",
-  "small-business",
-  "startups",
-  "finance",
-  "investing",
-  "real-estate",
-  "construction",
-  "manufacturing",
-  "energy",
-  "utilities",
-  "telecommunications",
-  "media",
-  "marketing",
-  "advertising",
-  "public-relations",
-  "social-media",
-  "digital-marketing",
-  "e-commerce",
-  "retail",
-  "hospitality",
-  "tourism",
-  "transportation",
-  "logistics",
-  "nonprofit",
-  "philanthropy",
-  "social-impact",
-  "community-development",
-  "social-services",
-  "human-rights",
-  "environment",
-  "sustainability",
-  "conservation",
-  "renewable-energy",
-  "climate-change",
-  "wildlife",
-  "nature",
-  "outdoors",
-  "recreation",
-  "sports",
-  "fitness",
-  "wellness",
-  "mental-health",
-  "self-care",
-  "personal-growth",
-  "relationships",
-  "family",
-  "parenting",
-  "seniors",
-  "youth",
-  "LGBTQ+",
-  "diversity",
-  "inclusion",
-  "equity",
-  "social-justice",
-  "civil-rights",
-  "activism",
-  "advocacy",
-  "community-service",
-  "volunteer",
-  "nonprofit",
-  "philanthropy",
-  "charitable",
-  "fundraising",
-  "awareness",
-  "education",
-  "lifelong-learning",
-  "professional-development",
-  "leadership",
-  "entrepreneurship",
-  "small-business",
-  "startups",
-  "finance",
-  "investing",
-  "real-estate",
-  "construction",
-  "manufacturing",
-  "energy",
-  "utilities",
-  "telecommunications",
-  "media",
-  "marketing",
-  "advertising",
-  "public-relations",
-  "social-media",
-  "digital-marketing",
-  "e-commerce",
-  "retail",
-  "hospitality",
-  "tourism",
-  "transportation",
-  "logistics"
+  "Arts & Culture",
+  "Business & Professional",
+  "Charity & Causes",
+  "Community & Civic",
+  "Education & Learning",
+  "Fashion & Beauty",
+  "Film, Media & Entertainment",
+  "Food & Drink",
+  "Health & Wellness",
+  "Hobbies & Special Interests",
+  "Music",
+  "Performing & Visual Arts",
+  "Religion & Spirituality",
+  "Science & Technology",
+  "Seasonal & Holiday",
+  "Sports & Fitness",
+  "Travel & Outdoor",
+  "Other"
 ];
+const NUM_USERS = 100;
+const NUM_COMMUNITIES = 30;
+const NUM_EVENTS = 200;
+const NUM_TICKETS = 500;
+const NUM_PAYMENTS = 300;
 
 async function main() {
-  for (const location of mapData) {
-      const existingCity = await prisma.city.findUnique({
-          where: { name: location.name },
+  await prisma.$transaction(async (tx) => {
+    // Create cities (keep as is)
+    for (const location of mapData) {
+      await tx.city.upsert({
+        where: { name: location.name },
+        update: {},
+        create: location,
       });
-      if (!existingCity) {
-          await prisma.city.create({ data: location });
-      } else {
-          console.log(`City ${location.name} already exists.`);
-      }
-  }
-  for (const tagName of popularEventTags) {
-    const existingTag = await prisma.tag.findUnique({
-      where: {
-        name: tagName
-      }
-    });
-
-    if (!existingTag) {
-      await prisma.tag.create({
-        data: {
-          name: tagName
-        }
-      });
-      console.log(`Created tag: ${tagName}`);
-    } else {
-      console.log(`Tag "${tagName}" already exists.`);
     }
-  }
+    console.log('Cities created');
+
+    // Create tags (keep as is)
+    for (const tagName of popularEventTags) {
+      await tx.tag.upsert({
+        where: { name: tagName },
+        update: {},
+        create: { name: tagName },
+      });
+    }
+    console.log('Tags created');
+
+    // Create users
+    const users: User[] = []; // Explicitly type users as User[]
+    for (let i = 0; i < NUM_USERS; i++) {
+      const uid = faker.string.uuid();
+      const user = await tx.user.upsert({
+        where: { uid },
+        update: {},
+        create: {
+          uid,
+          name: faker.person.fullName(),
+          image: faker.image.avatar(),
+          stripe_customer_id: faker.string.alphanumeric(10),
+          createdAt: faker.date.past(),
+          updatedAt: faker.date.recent(),
+          tags: {
+            connect: faker.helpers.arrayElements(popularEventTags, { min: 1, max: 5 }).map(tag => ({ name: tag })),
+          },
+        },
+      });
+      users.push(user);
+
+      // Create credentials or auth provider (keep as is)
+      if (Math.random() > 0.5) {
+        await tx.credentials.create({
+          data: {
+            uid: user.uid,
+            email: faker.internet.email(),
+            passwordHash: await bcrypt.hash('123456', 10),
+          },
+        });
+      } else {
+        await tx.authProvider.create({
+          data: {
+            uid: user.uid,
+            type: Math.random() > 0.5 ? AuthProviderType.GOOGLE : AuthProviderType.CREDENTIALS,
+          },
+        });
+      }
+
+      // Assign roles (keep as is)
+      if (Math.random() < 0.1) {
+        await tx.admin.create({ data: { uid: user.uid } });
+      } else if (Math.random() < 0.3) {
+        await tx.organization.create({ data: { uid: user.uid } });
+      } else {
+        await tx.individual.create({ data: { uid: user.uid } });
+      }
+    }
+    console.log('Users created');
+
+    // Create communities
+    const communities = [];
+    for (let i = 0; i < NUM_COMMUNITIES; i++) {
+      const community = await tx.community.create({
+        data: {
+          name: faker.company.name(),
+          description: faker.lorem.paragraph(),
+          uid: users[i].uid,
+          tags: {
+            connect: faker.helpers.arrayElements(popularEventTags, { min: 1, max: 3 }).map(tag => ({ name: tag })),
+          },
+        },
+      });
+      communities.push(community);
+    }
+    console.log('Communities created');
+
+    // Create events
+    const cities = await tx.city.findMany();
+    const events:Event[] = [];
+    for (let i = 0; i < NUM_EVENTS; i++) {
+      const startDate = faker.date.future();
+      const endDate = new Date(startDate.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000);
+      const city = faker.helpers.arrayElement(cities);
+      const eventType = faker.helpers.arrayElement([EventType.FREE, EventType.PAID]);
+      const event = await tx.event.create({
+        data: {
+          title: faker.lorem.words(3),
+          description: faker.lorem.paragraph(),
+          date: startDate,
+          city_id: city.id,
+          uid: users[Math.floor(Math.random() * users.length)].uid,
+          community_id: Math.random() > 0.5 ? communities[Math.floor(Math.random() * communities.length)].community_id : null,
+          address: faker.location.streetAddress(),
+          longitude: faker.location.longitude(),
+          latitude: faker.location.latitude(),
+          tags: {
+            connect: faker.helpers.arrayElements(popularEventTags, { min: 1, max: 3 }).map(tag => ({ name: tag })),
+          },
+          ticketAmount: faker.number.int({ min: 10, max: 1000 }),
+          TicketPrice: eventType === EventType.PAID ? parseFloat(faker.finance.amount({ min: 5, max: 500, dec: 2 })) : 0,
+          image: faker.image.avatar(),
+          type: eventType,
+        },
+      });
+      events.push(event);
+    }
+    console.log('Events created');
+
+    // Create tickets (using createMany)
+    await tx.ticket.createMany({
+      data: Array.from({ length: NUM_TICKETS }, () => ({
+        event_id: events[Math.floor(Math.random() * events.length)].event_id,
+        uid: users[Math.floor(Math.random() * users.length)].uid,
+        status: faker.helpers.arrayElement(['reserved', 'paid', 'cancelled']),
+      })),
+    });
+    console.log('Tickets created');
+
+    // Create payments (using createMany)
+    await tx.payment.createMany({
+      data: Array.from({ length: NUM_PAYMENTS }, () => ({
+        uid: users[Math.floor(Math.random() * users.length)].uid,
+        amount: parseFloat(faker.finance.amount({ min: 10, max: 1000 })),
+        currency: 'USD',
+        status: faker.helpers.arrayElement(['pending', 'completed', 'failed']),
+        billing_date: faker.date.recent(),
+      })),
+    });
+    console.log('Payments created');
+  }, { timeout: 100000 });
 }
+
 main()
   .catch((e) => {
     console.error(e);

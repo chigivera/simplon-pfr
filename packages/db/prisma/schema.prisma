@@ -26,24 +26,11 @@ model User {
     Individual         Individual?
     Member             Member?
     Organization       Organization?
-    Profile            Profile?
     Community          Community[]
     Event              Event[]
     Payment            Payment[]
     Ticket             Ticket[]
     tags               Tag[]         @relation(name: "UserTags")
-}
-
-model Profile {
-    profile_id String  @id @default(uuid())
-    name       String
-    bio        String?
-    avatar_url String?
-    uid        String  @unique
-
-    user User @relation(fields: [uid], references: [uid])
-
-    @@map("profiles") // Rename the table to profiles
 }
 
 model Admin {
@@ -52,8 +39,9 @@ model Admin {
 }
 
 model Member {
-    uid  String @id
-    user User   @relation(fields: [uid], references: [uid])
+    uid         String      @id
+    user        User        @relation(fields: [uid], references: [uid])
+    communities Community[]
 }
 
 model Individual {
@@ -93,32 +81,41 @@ model Community {
     description  String?
     created_at   DateTime @default(now())
     uid          String   @unique
-
-    user   User    @relation(fields: [uid], references: [uid])
-    events Event[]
-    tags   Tag[]   @relation(name: "CommunityTags")
+    members      Member[]
+    owner        User     @relation(fields: [uid], references: [uid])
+    events       Event[]
+    tags         Tag[]    @relation(name: "CommunityTags")
 
     @@map("communities") // Rename the table to communities
 }
 
 model Event {
-    event_id     String   @id @default(uuid())
+    event_id     String     @id @default(uuid())
     title        String
     description  String?
     date         DateTime
     city_id      String // Foreign key referencing Location
     uid          String?
     community_id String?
-    tags         Tag[]    @relation(name: "EventTags")
-    user       User?      @relation(fields: [uid], references: [uid])
-    community  Community? @relation(fields: [community_id], references: [community_id])
-    tickets    Ticket[]
-    city       City       @relation(fields: [city_id], references: [id])
-    address    String?
-    longitude  Float?
-    latitude   Float?
-
+    tags         Tag[]      @relation(name: "EventTags")
+    user         User?      @relation(fields: [uid], references: [uid])
+    community    Community? @relation(fields: [community_id], references: [community_id])
+    tickets      Ticket[]
+    city         City       @relation(fields: [city_id], references: [id])
+    address      String?
+    longitude    Float?
+    latitude     Float?
+    ticketAmount Int
+    TicketPrice  Float      @default(0)
+    type         EventType
+    image        String? // New attribute for image
+                                                        
     @@map("events") // Rename the table to events
+}
+
+enum EventType {
+    FREE
+    PAID
 }
 
 model Ticket {
@@ -146,8 +143,6 @@ model Payment {
 
     @@map("payments") // Rename the table to payments
 }
-
-
 
 model Tag {
     tag_id String @id @default(uuid())
