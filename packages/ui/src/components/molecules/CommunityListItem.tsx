@@ -15,9 +15,7 @@ function CommunityListItem({ image, name }: Community) {
       <div
         style={{
           display: 'flex',
-
           marginLeft: '10px',  // Adjust the margin as needed
-
           maxWidth: '200px',  // Adjust the max width as needed
           maxHeight: '100px',  // Fixed height for the text
           overflow: 'hidden',  // Hide overflowed content
