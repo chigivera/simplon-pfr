@@ -52,7 +52,20 @@ export const formSchemaEvent = z.object({
     event_id: z.string().uuid().optional(), // Optional for updates
 
 })
+export const formEventTitle = z.object({
+  title: z.string().optional(), // Optional for updates
 
+})
+export const formSchemaEvents = z.object({
+  page: z.number().default(0),
+  limit: z.number().default(8),
+  date_start: z.string().optional(),
+  date_end: z.string().optional(),
+  order: z.string().default("newest"),
+  tags: z.array(z.string()).optional(),
+  title: z.string().optional(), // Added title
+  city: z.string().optional(), // Added city
+});
 export const formSchemaEventCreate = z.object({
     image: z.string().optional(), // Optional for updates
     title: z.string()

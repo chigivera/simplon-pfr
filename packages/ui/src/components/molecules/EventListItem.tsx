@@ -87,7 +87,7 @@ const EventListItem: React.FC<Event> = ({
             <strong>Date:</strong> {date}
           </p>
           <p>
-            <strong>Location:</strong> {address}, {city.name}
+            <strong>Location:</strong>  {city.name}, {address}
           </p>
         </div>
       </div>

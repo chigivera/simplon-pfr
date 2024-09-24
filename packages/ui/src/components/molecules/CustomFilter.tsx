@@ -1,17 +1,19 @@
 "use client";
 import { Space, DatePicker, Select, Tag, Input } from "antd";
-import { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { ReactElement, useState } from "react";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 interface Filters {
-    date_start: Dayjs | null;
-    date_end: Dayjs | null;
-    order: string;
+    date_start: string | undefined;
+    date_end: string | undefined;
+    order: string | undefined;
     tags: string[];
-}
+    title: string | undefined;
+    city: string | undefined;
+  }
 
 interface CustomFiltersProps {
     filters: Filters;
@@ -26,12 +28,11 @@ const CustomFilter: React.FC<CustomFiltersProps> = ({
 }) => {
     const [tags, setTags] = useState<string[]>(filters.tags);
 
-    // Adjusted handleDateChange to match expected parameters
-    const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
+    const handleDateChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null) => {
         setFilters({
             ...filters,
-            date_start: dates ? dates[0] : null,
-            date_end: dates ? dates[1] : null,
+            date_start: dates?.[0]?.toISOString() || undefined,
+            date_end: dates?.[1]?.toISOString() || undefined,
         });
     };
 
@@ -52,12 +53,16 @@ const CustomFilter: React.FC<CustomFiltersProps> = ({
             tags: updatedTags,
         });
     };
+
     return (
-        <Space style={{backgroundColor:'#FFF9D0',padding:'1em',marginTop:'1em'}}>
+        <Space style={{backgroundColor:'#FFF9D0', padding:'1em', marginTop:'1em'}}>
             <RangePicker
                 showTime
-                value={[filters.date_start, filters.date_end]}
-                onChange={handleDateChange} // Correctly typed onChange
+                value={[
+                    filters.date_start ? dayjs(filters.date_start) : null,
+                    filters.date_end ? dayjs(filters.date_end) : null
+                ]}
+                onChange={handleDateChange}
             />
             <Select
                 value={filters.order}

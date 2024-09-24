@@ -1,21 +1,70 @@
 import { TRPCError } from "@trpc/server";
+
 import {
   formSchemaEvent,
   formSchemaEventCreate,
+  formSchemaEvents,
 } from "@ntla9aw/forms/src/schemas";
 import { privateProcedure, publicProcedure, router } from "../trpc";
 import { prisma } from "@ntla9aw/db";
 import { v4 as uuid } from "uuid";
 
 export const eventRoutes = router({
-  events: publicProcedure.query(({}) => {
+  events: publicProcedure.input(formSchemaEvents).query(async ({ input }) => {
+    const { page, limit, date_start, date_end, order, tags, title, city } = input;
+    const skip = page * limit;
+  
+    const where = {
+      ...(date_start && date_end
+        ? {
+            date: {
+              gte: new Date(date_start),
+              lte: new Date(date_end),
+            },
+          }
+        : {}),
+      ...(tags && tags.length > 0
+        ? {
+            tags: {
+              some: {
+                name: {
+                  in: tags,
+                },
+              },
+            },
+          }
+        : {}),
+      ...(title
+        ? {
+            title: {
+              contains: title,
+            },
+          }
+        : {}),
+      ...(city
+        ? {
+            city: {
+              name: {
+                equals: city,
+              },
+            },
+          }
+        : {}),
+    };
+  
     return prisma.event.findMany({
+      where,
       include: {
         tags: true,
         community: true,
         city: true,
         user: true,
       },
+      orderBy: {
+        date: order === "newest" ? "desc" : "asc",
+      },
+      skip,
+      take: limit,
     });
   }),
 
@@ -58,7 +107,7 @@ export const eventRoutes = router({
           image,
           type,
           TicketPrice,
-          ticketAmount
+          ticketAmount,
         },
       }) => {
         // Create a new event in the database
@@ -77,7 +126,7 @@ export const eventRoutes = router({
             image: image || null, // Allow image to be optional
             type,
             ticketAmount: ticketAmount || 0,
-            TicketPrice: TicketPrice || 0
+            TicketPrice: TicketPrice || 0,
           },
         });
 
@@ -86,5 +135,5 @@ export const eventRoutes = router({
           event: newEvent,
         };
       }
-    ),                                                        
+    ),
 });

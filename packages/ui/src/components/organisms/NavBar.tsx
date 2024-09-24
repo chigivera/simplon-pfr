@@ -51,18 +51,18 @@ const unauthNavItems = [
 
 const CustomNavBar: React.FC = () => {
   const {status:isAuthenticated} = useSession()
-  const handleSearch = (tag: string, location: string) => {
+  const handleSearch = (title: string, location: string) => {
     // Construct the URL with query parameters
-    const tagQueryString = tag ? `tag=${tag}` : '';
+    const titleQueryString = title ? `title=${title}` : '';
     const cityQueryString = location ? `city=${location}` : '';
     
-    const queryString = [tagQueryString, cityQueryString].filter(Boolean).join('&');
+    const queryString = [titleQueryString, cityQueryString].filter(Boolean).join('&');
     
     if (queryString) {
       window.location.href = `/home/explore?${queryString}`;
     }
     
-    console.log("Searched values:", tag, location);
+    console.log("Searched values:", title, location);
     // Implement additional search logic if needed
   };
   return (
