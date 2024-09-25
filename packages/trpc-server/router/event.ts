@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
 import {
+  formSchemaBoooking,
   formSchemaEvent,
   formSchemaEventCreate,
   formSchemaEvents,
@@ -136,4 +137,30 @@ export const eventRoutes = router({
         };
       }
     ),
+    booking: privateProcedure("member")
+    .input(formSchemaBoooking)
+    .mutation(async ({ input }) => {
+      const { ticket_id, event_id, uid, purchase_date, status } = input;
+  
+      // Use Prisma upsert to create or update the ticket
+      const ticket = await prisma.ticket.upsert({
+        where: {
+          ticket_id: ticket_id || "", // Use the provided ticket_id if available
+        },
+        create: {
+          event_id,
+          uid,
+          purchase_date,
+          status,
+        },
+        update: {
+          event_id,
+          uid,
+          purchase_date,
+          status,
+        },
+      });
+  
+      return ticket;
+    })
 });

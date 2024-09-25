@@ -11,7 +11,8 @@ const EventCard: React.FC<Event> = ({
   image,
   tags,
   date,
-  city
+  city,
+  community
 }) => {
   return (
     // <Badge count={<Typography style={{backgroundColor:'#5AB2FF',borderRadius:30,padding:'0 4px' }}>{badge}</Typography>}>
@@ -28,17 +29,17 @@ const EventCard: React.FC<Event> = ({
         ]}
       >
         <Meta
-          avatar={<Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />}
+          avatar={<Avatar src={`${community?.image}`} />}
           title={title}
         />
         <div style={{ marginTop: 10 }}>
           <div>
-            {tags.map((tag) => (
+            {tags && tags.map((tag) => (
               <Tag key={tag.tag_id} color="blue" >{tag.name}</Tag>
             ))}
           </div>
           <p><strong>Date:</strong> {date}</p>
-          <p><strong>Location:</strong> {city.name}</p>
+          <p><strong>Location:</strong> {city && city.name}</p>
         </div>
       </Card>
     // </Badge>

@@ -65,7 +65,7 @@ export enum AuthProviderType {
   
   export interface Community {
     community_id: string;
-    image?: string | null;
+    image: string | null;
     name: string;
     description?: string | null;
     created_at: string;

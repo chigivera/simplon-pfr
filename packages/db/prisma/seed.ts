@@ -160,6 +160,7 @@ async function main() {
           name: faker.company.name(),
           description: faker.lorem.paragraph(),
           uid: users[i].uid,
+          image: faker.image.avatar(),
           tags: {
             connect: faker.helpers.arrayElements(popularEventTags, { min: 1, max: 3 }).map(tag => ({ name: tag })),
           },

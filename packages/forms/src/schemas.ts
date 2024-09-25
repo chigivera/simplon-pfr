@@ -111,3 +111,10 @@ export const formSchemaSubscription = z.object({
   });
   
   
+  export const formSchemaBoooking = z.object({
+    ticket_id: z.string().uuid().optional(), // Optional since it will be auto-generated
+    event_id: z.string().nonempty("Event ID is required"),
+    uid: z.string().nonempty("User ID is required"),
+    purchase_date: z.date().optional().default(new Date()), // Automatically defaults to current date
+    status: z.enum(["pending", "confirmed", "cancelled"]), // Define valid statuses
+  });

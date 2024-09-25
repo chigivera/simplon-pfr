@@ -85,7 +85,7 @@ model Community {
     owner        User     @relation(fields: [uid], references: [uid])
     events       Event[]
     tags         Tag[]    @relation(name: "CommunityTags")
-
+    image String?
     @@map("communities") // Rename the table to communities
 }
 

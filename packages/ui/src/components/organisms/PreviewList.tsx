@@ -24,7 +24,7 @@ function PreviewList({ Card, data, title, Button ,style}: PreviewListProps) {
       {/* Wrap the Row in a div for scrolling  {  overflowY: 'auto', marginBottom: 20 }*/}
       <div style={style}>
         <Row gutter={[32, 32]} style={{ minWidth: 1200 }}> {/* Maintain spacing between items */}
-          {data.slice(0, 8).map((item, index) => (
+          {data.slice(0, 4).map((item, index) => (
             <Col span={6} key={index}> {/* Specify span for responsive layout */}
               <Card {...item} /> {/* Pass item props to Card */}
             </Col>

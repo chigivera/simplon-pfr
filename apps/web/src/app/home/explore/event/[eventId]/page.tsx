@@ -9,7 +9,9 @@ import Button from "@ntla9aw/ui/src/components/atoms/Button";
 import TicketCard from "@ntla9aw/ui/src/components/molecules/TicketCard";
 import { trpcStatic } from "@ntla9aw/trpc-client/src/static";
 import { Community, Event } from "@ntla9aw/ui/src/utils/types";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { trpcClient } from "@ntla9aw/trpc-client/src/client";
+import { useSession } from "next-auth/react";
 export default function EventPage() {
   const { eventId } = useParams(); // eventId can be string or string[]
   const [eventData, setEventData] = useState<Event>();
@@ -17,7 +19,8 @@ export default function EventPage() {
   const [communitiesData, setCommunitiesData] = useState<Community[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const {data:userData} = useSession()
+  const router = useRouter()
   // Ensure eventId is a string
   const eventIdString = Array.isArray(eventId) ? eventId[0] : eventId;
 
@@ -70,7 +73,29 @@ export default function EventPage() {
     fetchCommunitiesData();
     fetchEventsData();
   }, []);
-  console.log(loading, error);
+
+  const handleBuyTicket = async () => {
+    const { mutateAsync: booking } = trpcClient.event.booking.useMutation();
+  
+    if (!userData?.user?.uid) {
+      router.push('/auth/signin');
+      return;
+    }
+  
+    try {
+      await booking({
+        status: 'pending',
+        uid: userData.user.uid,
+        event_id: eventIdString,
+      });
+      // Add success notification or UI feedback
+      console.log("Ticket booked successfully");
+    } catch (error) {
+      console.error("Failed to book ticket", error);
+      // Add error notification or UI feedback
+    }
+  };
+  console.log(loading, error,communitiesData);
   return (
     <div>
       {/* TODO EVENT IMAGE */}
@@ -86,7 +111,7 @@ export default function EventPage() {
           src={`${eventData?.image}`}
           // Replace with your event image URL
           alt="Event"
-          style={{ objectFit: "fill", width: "100%", height: "" }}
+          style={{ objectFit: "fill", width: "100%", height: "400px" }}
         />
       </div>
       {/* TODO EVENT INFO */}
@@ -127,11 +152,11 @@ export default function EventPage() {
         <Col span={6} style={{ backgroundColor: "#FFF9D0", padding: "1em" }}>
           <Space direction="vertical">
             <TicketCard
-              ticketAmount={5}
-              onClick={() => console.log("Buy Ticket")}
+              ticketAmount={eventData?.ticketAmount}
+              onClick={handleBuyTicket}
             />
             {eventData?.community && (
-              <CommunityCard community={eventData?.community} />
+              <CommunityCard  {...eventData.community} />
             )}
           </Space>
         </Col>
