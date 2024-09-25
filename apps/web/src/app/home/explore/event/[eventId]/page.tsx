@@ -19,8 +19,8 @@ export default function EventPage() {
   const [communitiesData, setCommunitiesData] = useState<Community[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const {data:userData} = useSession()
-  const router = useRouter()
+  const { data: userData } = useSession();
+  const router = useRouter();
   // Ensure eventId is a string
   const eventIdString = Array.isArray(eventId) ? eventId[0] : eventId;
 
@@ -76,15 +76,15 @@ export default function EventPage() {
 
   const handleBuyTicket = async () => {
     const { mutateAsync: booking } = trpcClient.event.booking.useMutation();
-  
+
     if (!userData?.user?.uid) {
-      router.push('/auth/signin');
+      router.push("/auth/signin");
       return;
     }
-  
+
     try {
       await booking({
-        status: 'pending',
+        status: "pending",
         uid: userData.user.uid,
         event_id: eventIdString,
       });
@@ -95,7 +95,7 @@ export default function EventPage() {
       // Add error notification or UI feedback
     }
   };
-  console.log(loading, error,communitiesData);
+  console.log(loading, error, communitiesData);
   return (
     <div>
       {/* TODO EVENT IMAGE */}
@@ -155,9 +155,7 @@ export default function EventPage() {
               ticketAmount={eventData?.ticketAmount}
               onClick={handleBuyTicket}
             />
-            {eventData?.community && (
-              <CommunityCard  {...eventData.community} />
-            )}
+            {eventData?.community && <CommunityCard {...eventData.community} />}
           </Space>
         </Col>
       </Row>
