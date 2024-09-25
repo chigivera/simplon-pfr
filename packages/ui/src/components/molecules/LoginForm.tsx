@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import CustomButton from "../atoms/Button";
 import { Typography } from "antd";
 import { Controller } from "react-hook-form";
+import { useRouter } from "next/navigation";
 const {Title} = Typography;
 const LoginForm = ({title}:{title:string}) => {
   const {
@@ -13,7 +14,7 @@ const LoginForm = ({title}:{title:string}) => {
     handleSubmit,
     formState: { errors },
   } = userFormLogin();
-
+  const router  = useRouter()
   console.log(errors)
   const onSubmit = async (data: { email: string; password: string }) => {
     console.log(data)
@@ -65,7 +66,7 @@ const LoginForm = ({title}:{title:string}) => {
           style={{ width: 130,marginRight:7 }}
           label="New Here?"
           onClick={() => {
-            console.log("clicked");
+            router.push('/auth/register')
           }}
         />
         <Button style={{ width: 130 }} type="primary" htmlType="submit">

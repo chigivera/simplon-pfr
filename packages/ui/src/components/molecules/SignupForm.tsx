@@ -1,28 +1,20 @@
 "use client";
 
 import  { useState } from 'react';
-import { Button, Input, Form, Upload, Image } from "antd";
+import { Button, Input, Form } from "antd";
 import { Controller } from "react-hook-form";
 import { userFormRegister } from "@ntla9aw/forms/src/register";
 import CustomButton from "../atoms/Button";
 import { Typography } from "antd";
 import { trpcClient } from "@ntla9aw/trpc-client/src/client";
 import { signIn } from "next-auth/react";
-import { PlusOutlined } from "@ant-design/icons";
-import type { UploadFile, UploadProps } from "antd";
 import { useRouter } from 'next/navigation'; // Import useRouter from Next.js
+import ImageUpload from '../atoms/ImageUpload';
 
 const { Title } = Typography;
 
-type FileType = Parameters<NonNullable<UploadProps['beforeUpload']>>[0];
 
-const getBase64 = (file: FileType): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
+
 
 const SignupForm = ({ title }: { title: string }) => {
   const {
@@ -33,18 +25,8 @@ const SignupForm = ({ title }: { title: string }) => {
   const { mutateAsync } = trpcClient.auth.registerWithCredentials.useMutation();
 const router = useRouter(); // Initialize useRouter
 
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewOpen, setPreviewOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as FileType);
-    }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-  };
   const handleLoginClick = () => {
     router.push('/auth/signin'); // Navigates to login
   };
@@ -88,7 +70,7 @@ const router = useRouter(); // Initialize useRouter
             await signIn("credentials", {
               email: data.email,
               password: data.password,
-              callbackUrl: "/",
+              callbackUrl: "/auth/subscription",
             });
           }
         router.push('/auth/subscription');
@@ -129,31 +111,19 @@ const router = useRouter(); // Initialize useRouter
           />
         </Form.Item>
 
-        <Form.Item valuePropName="fileList">
-          <Upload
-            beforeUpload={(file) => {
-              setFile(file);
-              return false;
-            }}
-            listType="picture-card"
-            showUploadList={false}
-            onPreview={handlePreview}
-          >
-            <Button style={{ border: 0, background: "none" }} icon={<PlusOutlined />}>
-              Upload
-            </Button>
-          </Upload>
-          {previewImage && (
-            <Image
-              wrapperStyle={{ display: "none" }}
-              preview={{
-                visible: previewOpen,
-                onVisibleChange: (visible) => setPreviewOpen(visible),
-                afterOpenChange: (visible) => !visible && setPreviewImage(""),
-              }}
-              src={previewImage}
-            />
-          )}
+        <Form.Item  validateStatus={errors.image ? "error" : ""}>
+          <Controller
+            name="image"
+            control={control}
+            render={({ field }) => (
+              <ImageUpload
+                onChange={(file) => {
+                  setFile(file);
+                  field.onChange(file);
+                }}
+              />
+            )}
+          />
         </Form.Item>
 
         <Form.Item style={{ display: "flex", flexWrap: "nowrap", flexDirection: "column" }}>

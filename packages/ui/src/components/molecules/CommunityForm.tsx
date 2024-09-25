@@ -1,26 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Input, Form, Upload, Image } from "antd";
+import { Button, Input, Form, Typography } from "antd";
 import { Controller } from "react-hook-form";
 import { userFormCommunity } from "@ntla9aw/forms/src/community";
-import { Typography } from "antd";
 import { trpcClient } from "@ntla9aw/trpc-client/src/client";
-import { PlusOutlined } from "@ant-design/icons";
-import type { UploadFile, UploadProps } from "antd";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import ImageUpload from "../atoms/ImageUpload";
+import TagSelector from "../atoms/TagSelector";
 
 const { Title } = Typography;
-
-type FileType = Parameters<NonNullable<UploadProps["beforeUpload"]>>[0];
-
-const getBase64 = (file: FileType): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
 
 const CommunityForm = ({ title }: { title: string }) => {
   const {
@@ -29,27 +19,16 @@ const CommunityForm = ({ title }: { title: string }) => {
     formState: { errors },
   } = userFormCommunity();
   const { mutateAsync } = trpcClient.community.create.useMutation();
-
+  const router = useRouter();
   const { data: userData } = useSession();
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewOpen, setPreviewOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as FileType);
-    }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-  };
 
   return (
     <>
       <Title level={2}>{title}</Title>
 
       <Form
-        name="signup"
+        name="community"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 21 }}
         style={{ maxWidth: 800 }}
@@ -59,7 +38,7 @@ const CommunityForm = ({ title }: { title: string }) => {
               const formData = new FormData();
               formData.append("file", file);
               formData.append("upload_preset", "ml_default");
-
+           
               const uploadResponse = await fetch(
                 "https://api.cloudinary.com/v1_1/dc0jqirfl/image/upload",
                 {
@@ -67,18 +46,22 @@ const CommunityForm = ({ title }: { title: string }) => {
                   body: formData,
                 }
               );
-
+           
               const uploadData = await uploadResponse.json();
               data.image = uploadData.secure_url;
             }
-          } catch (error) {
-            console.error("Registration error:", error);
-          }
-          data.uid = userData?.user?.uid || "";
-          console.log("data:", data);
-          try {
+            
+            data.uid = userData?.user?.uid || "";
+            
+            data.tags = data.tags ? data.tags.map(tag => ({
+              tag_id: tag.tag_id,
+              name: tag.name
+            })) : [];
+      
             const community = await mutateAsync(data);
             console.log("Community created:", community);
+            
+            router.push('/');
           } catch (error) {
             console.error("Error creating community:", error);
           }
@@ -109,34 +92,34 @@ const CommunityForm = ({ title }: { title: string }) => {
           />
         </Form.Item>
 
-        <Form.Item valuePropName="fileList">
-          <Upload
-            beforeUpload={(file) => {
-              setFile(file);
-              return false;
-            }}
-            listType="picture-card"
-            showUploadList={false}
-            onPreview={handlePreview}
-          >
-            <Button
-              style={{ border: 0, background: "none" }}
-              icon={<PlusOutlined />}
-            >
-              Upload
-            </Button>
-          </Upload>
-          {previewImage && (
-            <Image
-              wrapperStyle={{ display: "none" }}
-              preview={{
-                visible: previewOpen,
-                onVisibleChange: (visible) => setPreviewOpen(visible),
-                afterOpenChange: (visible) => !visible && setPreviewImage(""),
-              }}
-              src={previewImage}
-            />
-          )}
+        <Form.Item validateStatus={errors.image ? "error" : ""}>
+          <Controller
+            name="image"
+            control={control}
+            render={({ field }) => (
+              <ImageUpload
+                onChange={(file) => {
+                  setFile(file);
+                  field.onChange(file);
+
+                }}
+              />
+            )}
+          />
+        </Form.Item>
+
+        <Form.Item validateStatus={errors.tags ? "error" : ""}>
+          <Controller
+            name="tags"
+            control={control}
+            render={({ field }) => (
+              <TagSelector
+                selectedTags={field.value || []}
+                onTagChange={(tags) => field.onChange(tags)}
+              />
+            )}
+          />
+          {errors.tags && <p>{errors.tags.message}</p>}
         </Form.Item>
 
         <Form.Item

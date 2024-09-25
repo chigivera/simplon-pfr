@@ -2,22 +2,65 @@ import { prisma } from "@ntla9aw/db";
 import { Role } from "./types";
 import { TRPCError } from "@trpc/server";
 import Stripe from "stripe";
+import nodemailer from 'nodemailer';
+import QRCode from 'qrcode';
+import { Attachment } from "nodemailer/lib/mailer";
+interface EmailOptions {
+  to: string;
+  subject: string;
+  text?: string;
+  html?: string;
+  attachments?: Attachment[];
+}
+const transporter = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "8129459c310d50",
+    pass: "d990b04d930045"
+  }
+});
 
-export const getUserRoles = async (uid: string): Promise<Role[]> => {
+export const sendMail = async (options: EmailOptions): Promise<void> => {
+  const mailOptions = {
+    from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`,
+    ...options,
+  };
+
   try {
-    const [adminExists, memberExists, individualExists, organizationExists] =
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw new Error('Failed to send email');
+  }
+};
+
+export const generateQRCode = async (data: string): Promise<string> => {
+  try {
+    const qrCodeDataURL = await QRCode.toDataURL(data);
+    return qrCodeDataURL;
+  } catch (error) {
+    console.error('Error generating QR code:', error);
+    throw new Error('Failed to generate QR code');
+  }
+};
+export const getUserRoles = async (uid: string | undefined): Promise<Role[]> => {
+  try {
+    if(typeof uid === undefined) throw new Error
+    const [adminExists,organizationExists,individualExists, memberExists] =
       await Promise.all([
         prisma.admin.findUnique({ where: { uid } }),
-        prisma.member.findUnique({ where: { uid } }),
-        prisma.individual.findUnique({ where: { uid } }),
         prisma.organization.findUnique({ where: { uid } }),
+        prisma.individual.findUnique({ where: { uid } }),
+        prisma.member.findUnique({ where: { uid } }),
       ]);
 
     const roles: Role[] = [];
     if (adminExists) roles.push("admin");
-    if (memberExists) roles.push("member");
-    if (individualExists) roles.push("individual");
     if (organizationExists) roles.push("organization");
+    if (individualExists) roles.push("individual");
+    if (memberExists) roles.push("member");
 
     return roles;
   } catch (error) {
@@ -86,8 +129,8 @@ export const createCheckoutSession = async (priceId: string, uid: string) => {
       },
     ],
     mode: 'subscription',
-    success_url: `http://localhost:3000/dashboard`,
-    cancel_url: `http://localhost:3000/auth/subscription`,
+    success_url: `http://localhost:3000/auth/community`,
+    cancel_url: `http://localhost:3000/auth/subscription?cancel=true`,
     metadata: {
       uid, // Store user ID for later use
     },

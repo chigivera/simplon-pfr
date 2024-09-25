@@ -35,29 +35,29 @@ model User {
 
 model Admin {
     uid  String @id
-    user User   @relation(fields: [uid], references: [uid])
+    user User   @relation(fields: [uid], references: [uid],onDelete: Cascade)
 }
 
 model Member {
     uid         String      @id
-    user        User        @relation(fields: [uid], references: [uid])
+    user        User        @relation(fields: [uid], references: [uid],onDelete: Cascade)
     communities Community[]
 }
 
 model Individual {
     uid  String @id
-    user User   @relation(fields: [uid], references: [uid])
+    user User   @relation(fields: [uid], references: [uid],onDelete: Cascade)
 }
 
 model Organization {
     uid  String @id
-    user User   @relation(fields: [uid], references: [uid])
+    user User   @relation(fields: [uid], references: [uid],onDelete: Cascade)
 }
 
 model Credentials {
     uid          String   @id
     email        String   @unique
-    user         User     @relation(fields: [uid], references: [uid])
+    user         User     @relation(fields: [uid], references: [uid],onDelete: Cascade)
     passwordHash String
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
@@ -67,7 +67,7 @@ model AuthProvider {
     uid String @id
 
     type AuthProviderType
-    user User             @relation(fields: [uid], references: [uid])
+    user User             @relation(fields: [uid], references: [uid],onDelete: Cascade)
 }
 
 enum AuthProviderType {
@@ -77,12 +77,12 @@ enum AuthProviderType {
 
 model Community {
     community_id String   @id @default(uuid())
-    name         String   @unique
+    name         String   
     description  String?
     created_at   DateTime @default(now())
     uid          String   @unique
     members      Member[]
-    owner        User     @relation(fields: [uid], references: [uid])
+    owner        User     @relation(fields: [uid], references: [uid],onDelete: Cascade)
     events       Event[]
     tags         Tag[]    @relation(name: "CommunityTags")
     image String?
@@ -98,7 +98,7 @@ model Event {
     uid          String?
     community_id String?
     tags         Tag[]      @relation(name: "EventTags")
-    user         User?      @relation(fields: [uid], references: [uid])
+    user         User?      @relation(fields: [uid], references: [uid],onDelete: SetNull)
     community    Community? @relation(fields: [community_id], references: [community_id])
     tickets      Ticket[]
     city         City       @relation(fields: [city_id], references: [id])
@@ -109,7 +109,7 @@ model Event {
     TicketPrice  Float      @default(0)
     type         EventType
     image        String? // New attribute for image
-                                                        
+    ticketSold Int                        
     @@map("events") // Rename the table to events
 }
 
@@ -124,9 +124,8 @@ model Ticket {
     uid           String
     purchase_date DateTime @default(now())
     status        String
-
     event Event @relation(fields: [event_id], references: [event_id])
-    user  User  @relation(fields: [uid], references: [uid])
+    user  User  @relation(fields: [uid], references: [uid],onDelete: Cascade)
 
     @@map("tickets") // Rename the table to tickets
 }
@@ -139,7 +138,7 @@ model Payment {
     status       String
     billing_date DateTime
 
-    user User @relation(fields: [uid], references: [uid])
+    user User @relation(fields: [uid], references: [uid],onDelete: Cascade)
 
     @@map("payments") // Rename the table to payments
 }
