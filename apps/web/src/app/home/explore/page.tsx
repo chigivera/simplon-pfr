@@ -80,7 +80,7 @@ export default function Explore() {
     } finally {
       setLoading(false);
     }
-  }, [page, filters,eventsData,selectedEvent]);
+  }, [page, filters, eventsData, selectedEvent]);
 
   // Extract title and city from URL and set them as initial filters
   useEffect(() => {
@@ -135,9 +135,9 @@ export default function Explore() {
               selectedEvent
                 ? [selectedEvent.latitude, selectedEvent.longitude]
                 : [33, -7]
-              }
-              zoom={13}
-              />
+            }
+            zoom={13}
+          />
         </Col>
       </Row>
     </>

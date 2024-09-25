@@ -9,12 +9,12 @@ export default function HomeLayout({
 }) {
   return (
     <CustomLayout>
-<Suspense fallback={<Spin />}>
-      <Layout style={{ padding: "2em 8em" }}>
-        <CustomBreadCrumb />
-        {children}
-      </Layout>
-</Suspense>
+      <Suspense fallback={<Spin />}>
+        <Layout style={{ padding: "2em 8em" }}>
+          <CustomBreadCrumb />
+          {children}
+        </Layout>
+      </Suspense>
     </CustomLayout>
   );
 }
