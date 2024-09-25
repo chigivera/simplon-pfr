@@ -1,10 +1,10 @@
 // src/components/CustomButton.tsx
-import React from "react";
+import React, { MouseEvent } from "react";
 import { Button } from "antd";
 
 interface CustomButtonProps {
   label?: string;
-  onClick: () => void;
+  onClick: (() => void) | ((event: MouseEvent) => void);
   type?: "primary" | "default" | "dashed" | "link" | "text";
   style?: React.CSSProperties;
   shape?: "default" | "circle" | "round" | undefined,

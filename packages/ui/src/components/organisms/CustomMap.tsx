@@ -1,25 +1,33 @@
-import {  Marker, Popup, TileLayer } from "react-leaflet";
-import {MapContainer} from 'react-leaflet/MapContainer'
+import { Marker, Popup, TileLayer } from "react-leaflet";
+import { MapContainer } from "react-leaflet/MapContainer";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 
 // Define the props interface
 interface CustomMapProps {
-  position: [number, number]; // Tuple for latitude and longitude
+  position: [number | null | undefined, number | null | undefined]; // Tuple for latitude and longitude
   zoom: number;
 }
 
 const CustomMap: React.FC<CustomMapProps> = ({ position, zoom }) => {
+  // Default position in case latitude or longitude are null/undefined
+  const defaultPosition: [number, number] = [33.5731, -7.5898]; // e.g., Casablanca coordinates
+
+  // Ensure the position is valid by providing default values if necessary
+  const validPosition: [number, number] = [
+    position[0] ?? defaultPosition[0],
+    position[1] ?? defaultPosition[1],
+  ];
+
   return (
-    <MapContainer center={position} zoom={zoom} scrollWheelZoom={false} style={{ height: "400px", width: "100%" }}>
+    <MapContainer center={validPosition} zoom={zoom} style={{ height: "400px", width: "100%" }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <Marker position={position}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
+      <Marker position={validPosition}>
+        <Popup>A pretty CSS3 popup. Easily customizable.</Popup>
       </Marker>
     </MapContainer>
   );

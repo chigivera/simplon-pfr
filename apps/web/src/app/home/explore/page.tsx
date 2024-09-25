@@ -40,7 +40,7 @@ export default function Explore() {
   const [error, setError] = useState<null | string>(null);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
-
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const searchParams = useSearchParams();
 
   const observer = useRef<IntersectionObserver | null>(null);
@@ -70,6 +70,9 @@ export default function Explore() {
       if (data) {
         setEventsData((prevEvents) => [...prevEvents, ...data]);
         setHasMore(data.length === ITEMS_PER_PAGE);
+        if (page === 0 && eventsData.length > 0 && !selectedEvent) {
+          setSelectedEvent(eventsData[0]);
+        }
       }
     } catch (err) {
       setError("Error Fetching Events");
@@ -77,7 +80,7 @@ export default function Explore() {
     } finally {
       setLoading(false);
     }
-  }, [page, filters]);
+  }, [page, filters,eventsData,selectedEvent]);
 
   // Extract title and city from URL and set them as initial filters
   useEffect(() => {
@@ -101,6 +104,9 @@ export default function Explore() {
     setPage(0);
     setHasMore(true);
   };
+  const handleEventSelect = (event: Event) => {
+    setSelectedEvent(event);
+  };
   console.log(error);
   console.log(eventsData);
   return (
@@ -115,6 +121,8 @@ export default function Explore() {
           Card={EventListItem}
           data={eventsData}
           lastEventElementRef={lastEventElementRef}
+          onEventSelect={handleEventSelect}
+          selectedEvent={selectedEvent}
         />
         {loading && (
           <Col span={17} style={{ textAlign: "center", marginTop: "20px" }}>
@@ -122,7 +130,14 @@ export default function Explore() {
           </Col>
         )}
         <Col span={6} style={{ backgroundColor: "#FFF9D0", padding: "1em" }}>
-          <CustomMap position={[33, -7]} zoom={13} />
+          <CustomMap
+            position={
+              selectedEvent
+                ? [selectedEvent.latitude, selectedEvent.longitude]
+                : [33, -7]
+              }
+              zoom={13}
+              />
         </Col>
       </Row>
     </>

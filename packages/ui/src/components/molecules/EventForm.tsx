@@ -45,7 +45,7 @@ const EventForm = ({ title }: { title: string }) => {
       setCities(citiesData); // Assuming citiesData is an array of city objects
     }
   }, [citiesData]);
-  useEffect(() => {
+  useEffect(() => { 
     const getCommunity = async () => {
       if (userData?.user?.uid) {
         try {

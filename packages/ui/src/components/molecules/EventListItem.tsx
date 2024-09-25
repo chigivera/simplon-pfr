@@ -1,21 +1,18 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import { Avatar, Card, Image, Tag, Typography } from "antd";
-import { Event } from "../../utils/types"; // Ensure this includes the necessary properties
+import { Event } from "../../utils/types";
 import CustomButton from "../atoms/Button";
 import { useRouter } from "next/navigation";
 
-// export interface EventListItemProps extends Event {
-//   badge?: "hot" | "featured";
-// }
-
 const { Meta } = Card;
 
-const EventListItem: React.FC<Event> = ({
+interface EventListItemProps extends Event {
+  isSelected?: boolean;
+  onClick: () => void;
+}
+
+const EventListItem: React.FC<EventListItemProps> = ({
   event_id,
-  // type,
-  // description,
-  // latitude,
-  // longitude,
   image,
   title,
   date,
@@ -23,13 +20,15 @@ const EventListItem: React.FC<Event> = ({
   address,
   tags,
   community,
-  // badge,
   ticketAmount,
   TicketPrice,
+  isSelected,
+  onClick,
 }) => {
   const router = useRouter();
 
-  const handleBookClick = () => {
+  const handleBookClick = (e: MouseEvent) => {
+    e.stopPropagation();
     router.push(`/event/${event_id}`);
   };
 
@@ -42,29 +41,16 @@ const EventListItem: React.FC<Event> = ({
         height: "auto",
         padding: "16px",
         position: "relative",
+        border: isSelected ? "2px solid #1890ff" : "1px solid #d9d9d9",
+        backgroundColor: isSelected ? "#e6f7ff" : "white",
       }}
+      onClick={onClick}
       cover={
-        // <Badge
-        //   count={
-        //     badge && (
-        //       <Typography
-        //         style={{
-        //           backgroundColor: "#5AB2FF",
-        //           borderRadius: 30,
-        //           padding: "0 4px",
-        //         }}
-        //       >
-        //         {badge}
-        //       </Typography>
-        //     )
-        //   }
-        // >
-          <Image
-            alt="event"
-            src={`${image}`}
-            style={{ height: "150px", marginRight: "16px", objectFit: 'cover' }}
-          />
-        // </Badge>
+        <Image
+          alt="event"
+          src={`${image}`}
+          style={{ height: "150px", marginRight: "16px", objectFit: 'cover' }}
+        />
       }
     >
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
@@ -87,7 +73,7 @@ const EventListItem: React.FC<Event> = ({
             <strong>Date:</strong> {date}
           </p>
           <p>
-            <strong>Location:</strong>  {city.name}, {address}
+            <strong>Location:</strong> {address}, {city.name}
           </p>
         </div>
       </div>

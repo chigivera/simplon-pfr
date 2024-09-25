@@ -18,7 +18,7 @@ const PreviewPage = () => {
   useEffect(() => {
     async function fetchEventsData() {
       try {
-        const data = await trpcStatic.event.events.query();
+        const data = await trpcStatic.event.events.query({});
         if (data) {
           setEventsData(data);
         }

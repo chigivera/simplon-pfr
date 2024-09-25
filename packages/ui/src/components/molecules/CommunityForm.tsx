@@ -74,7 +74,7 @@ const CommunityForm = ({ title }: { title: string }) => {
           } catch (error) {
             console.error("Registration error:", error);
           }
-          data.uid = userData?.user?.uid;
+          data.uid = userData?.user?.uid || "";
           console.log("data:", data);
           try {
             const community = await mutateAsync(data);
